@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Categories</title>
+</head>
+<body style="justify-content: center;
+    align-items: center;
+    text-align: center; ">
+
+<h2>Categories</h2>
+
+<a href="{% url 'add_category' %}">Add Category</a>
+
+<hr>
+
+{% for c in categories %}
+<p>
+<div style="margin-bottom: 25px;">
+    {{c.id}}. {{ c.title }}
+
+    <button>
+        <a href="{% url 'category_detail' id=c.id %}" style="padding: 20px 20px 20px">Edit</a>
+    </button>
+
+
+    <a href="{% url 'delete_category' id=c.id %}" type="submit">Delete</a>
+
+</div>
+</p>
+{% empty %}
+<p>No categories found</p>
+{% endfor %}
+
+</body>
+</html>

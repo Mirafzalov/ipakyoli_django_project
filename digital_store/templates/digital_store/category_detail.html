@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Category Detail</title>
+</head>
+
+<body style="text-align: center; margin-top: 44px;">
+
+  <h2>{{ category }}</h2>
+
+  <form method="POST">
+      {% csrf_token %}
+
+      <label>
+          <input type="text" name="title" value="{{ category.title }}">
+      </label>
+
+
+      <br><br>
+
+      <button type="submit" style="margin-top: 20px;">
+          Save
+      </button>
+  </form>
+
+</body>
+</html>

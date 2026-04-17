@@ -1,0 +1,66 @@
+from django.shortcuts import render, get_object_or_404, redirect
+
+# Create your views here.
+from django.views.generic import DetailView, ListView
+
+from digital_store.forms import *
+from digital_store.models import Product, Category
+
+
+class MainPage(ListView):
+    model = Category
+    context_object_name = 'categories'
+    template_name = 'digital_store/index.html'
+    extra_context = {'title': 'Digital Store МАГАЗИН ТЕХНИКИ'}
+
+
+class ProductDetail(DetailView):
+    model = Product
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductDetail, self).get_context_data()
+        product = context['product']
+        context['title'] = context['product'].title
+        product.title = ' '.join(product.title.split(' ')[:-1])
+        context['same_brands'] = Product.objects.filter(brand=product.brand, title__icontains=product.title)
+        context['same_products'] = Product.objects.filter(category=product.category).exclude(pk=product.pk)
+        print(context['same_products'])
+        return context
+
+
+
+
+def get_category(request):
+    categories = Category.objects.all()
+    return render(request, 'digital_store/form_list.html', {'categories': categories,'title': 'title'})
+
+def delete_category(request, id):
+    category = get_object_or_404(Category, id=id)
+    if request.method == "GET":
+        category.delete()
+    return redirect('category_list')
+
+def get_category_detail(request, id):
+    if request.method == 'GET':
+        category = Category.objects.get(id=id)
+        return render(request, 'digital_store/category_detail.html', {'category': category, })
+    elif request.method == 'POST':
+        category = get_object_or_404(Category, id=id)
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+        return redirect('category_list')
+
+
+
+def add_category(request):
+    form = CategoryForm(request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')
+
+    return render(request, 'digital_store/add_form.html', {
+        'form': form
+    })
