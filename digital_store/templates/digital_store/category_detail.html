@@ -1,3 +1,52 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Category Detail</title>-->
+<!--</head>-->
+
+<!--<body style="text-align: center; margin-top: 44px;">-->
+
+
+<!--<form method="POST"  enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+
+<!--    <h4 style="margin-bottom: -1px; margin-right: 140px">Title</h4>-->
+<!--    <label>-->
+<!--        <input type="text" name="title" value="{{ category.title }}">-->
+<!--    </label>-->
+
+<!--    <h4 style="margin-bottom: -20px; margin-right: 140px">Icon</h4>-->
+<!--    <div style="display: flex; justify-content: center; align-items: center; height: 10vh; margin-left: 90px">-->
+
+<!--        <label>-->
+<!--            <table>-->
+<!--                <tr>-->
+<!--                    <td>-->
+<!--                        <img src="{{ category.icon }}" alt="">-->
+<!--                    </td>-->
+<!--                    <td>-->
+<!--                        <input type="file" name="icon">-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--            </table>-->
+
+<!--        </label>-->
+<!--    </div>-->
+
+
+<!--    <br><br>-->
+
+<!--    <button type="submit" style="margin-top: 20px;">-->
+<!--        Save-->
+<!--    </button>-->
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,24 +54,70 @@
     <title>Category Detail</title>
 </head>
 
-<body style="text-align: center; margin-top: 44px;">
+<body style="margin:0; font-family:Arial,sans-serif; background:#f4f6f8;">
 
-  <h2>{{ category }}</h2>
+<div style="max-width:500px; margin:60px auto; background:white;
+            padding:25px; border-radius:12px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.08);">
 
-  <form method="POST">
-      {% csrf_token %}
+    <h2 style="text-align:center; margin-bottom:25px;">
+        Edit Category
+    </h2>
 
-      <label>
-          <input type="text" name="title" value="{{ category.title }}">
-      </label>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
+        <!-- Title -->
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-weight:bold; margin-bottom:8px;">
+                Title
+            </label>
 
-      <br><br>
+            <input type="text"
+                   name="title"
+                   value="{{ category.title }}"
+                   style="width:100%; padding:10px;
+                          border:1px solid #ccc;
+                          border-radius:8px;
+                          outline:none;">
+        </div>
 
-      <button type="submit" style="margin-top: 20px;">
-          Save
-      </button>
-  </form>
+        <!-- Icon -->
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-weight:bold; margin-bottom:8px;">
+                Icon
+            </label>
+
+            <div style="display:flex; align-items:center; gap:15px;">
+
+                {% if category.icon %}
+                    <img src="{{ category.icon.url }}"
+                         style="height:50px; width:50px;
+                                object-fit:cover;
+                                border-radius:8px;
+                                border:1px solid #ddd;">
+                {% else %}
+                    <div style="height:50px; width:50px;
+                                background:#eee;
+                                border-radius:8px;"></div>
+                {% endif %}
+
+                <input type="file" name="icon">
+            </div>
+        </div>
+
+        <!-- Button -->
+        <button type="submit"
+                style="width:100%; padding:12px;
+                       background:#2ecc71; color:white;
+                       border:none; border-radius:8px;
+                       font-size:15px; cursor:pointer;">
+            Save Changes
+        </button>
+
+    </form>
+
+</div>
 
 </body>
 </html>

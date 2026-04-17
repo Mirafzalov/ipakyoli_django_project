@@ -4,7 +4,7 @@ from django.urls import reverse
 
 class Category(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название категори')
-    icon = models.ImageField(upload_to='icons/', verbose_name='Иконки', null=True, blank=True)
+    icon = models.FileField(upload_to='icons/', verbose_name='Иконки', blank=True)
     slug = models.SlugField(unique=True, verbose_name='Слаг категории', null=True, blank=True)
 
     def __str__(self):

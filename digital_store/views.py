@@ -31,9 +31,13 @@ class ProductDetail(DetailView):
 
 
 
+
+
 def get_category(request):
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by('id')
     return render(request, 'digital_store/form_list.html', {'categories': categories,'title': 'title'})
+
+
 
 def delete_category(request, id):
     category = get_object_or_404(Category, id=id)
@@ -44,18 +48,23 @@ def delete_category(request, id):
 def get_category_detail(request, id):
     if request.method == 'GET':
         category = Category.objects.get(id=id)
-        return render(request, 'digital_store/category_detail.html', {'category': category, })
+        return render(request, 'digital_store/category_detail.html', {'category': category})
     elif request.method == 'POST':
         category = get_object_or_404(Category, id=id)
-        form = CategoryForm(request.POST, instance=category)
+        form = CategoryForm(request.POST, request.FILES, instance=category)
         if form.is_valid():
+            print(request.FILES)
+            print(form.cleaned_data)
             form.save()
+        else:
+            print("ERROR:", form.errors)
+
         return redirect('category_list')
 
 
 
 def add_category(request):
-    form = CategoryForm(request.POST)
+    form = CategoryForm(request.POST, request.FILES)
     if request.method == 'POST':
         if form.is_valid():
             form.save()

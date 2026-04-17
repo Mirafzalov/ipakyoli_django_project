@@ -7,7 +7,7 @@ from digital_store.models import *
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ('title',)
+        fields = ('title', 'icon')
 
 
 class BrandForm(forms.ModelForm):
