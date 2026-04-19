@@ -1,10 +1,13 @@
+from django.contrib.auth import login, logout
 from django.shortcuts import render, get_object_or_404, redirect
-
+from django.contrib.auth.models import User
 # Create your views here.
 from django.views.generic import DetailView, ListView
 
 from digital_store.forms import *
 from digital_store.models import Product, Category
+
+
 
 
 class MainPage(ListView):
@@ -73,3 +76,38 @@ def add_category(request):
     return render(request, 'digital_store/add_form.html', {
         'form': form
     })
+
+
+# Login and Register
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('')
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        user = form
+        return redirect('main')
+
+def logout_view(request):
+    logout(request)
+    return redirect('main')
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('login')
+    else:
+        if request.method == 'POST':
+            form = RegisterForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                login(request, user)
+                return redirect('')
+        else:
+            form = RegisterForm()
+
+    return render(request, 'digital_store/register.html', {'title': 'Регистрация',  'reg_form': form})
+
+
+

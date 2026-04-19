@@ -9,4 +9,7 @@ urlpatterns = [
     path('category_list/<id>', get_category_detail, name='category_detail'),
     path('delete_category/<id>', delete_category, name='delete_category'),
     path('add_category/', add_category, name='add_category'),
+    path('register/', register_view, name='reg_form'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout, name='logout'),
 ]
