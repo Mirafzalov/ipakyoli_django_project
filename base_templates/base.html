@@ -1,73 +1,46 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
+    <title>Marketplace</title>
+    <!-- LINK CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Swiper    -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
 
-
-    {% include 'components/_style.html' %}
 
 </head>
 
+<script>
+function toggleHeart(el) {
+    el.classList.toggle("active");
+}
+</script>
+
 <body>
 
-<!-- header start -->
 
-<header>
-    <div class="nav__header">
-        <div class="container">
-            <div class="nav_info">
-                <div class="nav_left">
-                    <div class="languege">
-                        <!--                        <select name="brend" class="filter_lang">-->
-                        <!--                            <option value="Samsung"><a href="" class="lang">Ру</a></option>-->
-                        <!--                            <option value="Apple"><a href="" class="lang">En</a></option>-->
-                        <!--                        </select>-->
-                    </div>
-                    <div class="city">
-                        <!--                        <select name="brend" class="filter_city">-->
-                        <!--                            <option value="Samsung"><a href="" class="lang">Ташкент</a></option>-->
-                        <!--                            <option value="Apple"><a href="" class="lang">Самарканд</a></option>-->
-                        <!--                        </select>-->
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!--Каталог и поиск-->
-    {% include 'components/_nav.html' %}
-
-    <!--Категории-->
-    {% include 'components/_categories.html' %}
-
-    {% block header %}
-    {% include 'components/_baner.html' %}
-    {% endblock header %}
-
-</header>
-<!-- header end -->
+<!-- NAVBAR -->
+{% include 'components/_navbar.html' %}
 
 
-<!-- Main start -->
+<!-- BANNER -->
+{% include 'components/_baner.html' %}
+
+
 {% block main %}
 
+
 {% endblock main %}
-<!-- Main end -->
 
 
-<!-- Footer start -->
+<!-- FOOTER -->
+
 {% include 'layouts/_footer.html' %}
-<!-- Footer end -->
 
 
-{% include 'components/_scripts.html' %}
 </body>
-
 </html>
+

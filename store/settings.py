@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +42,15 @@ INSTALLED_APPS = [
     'digital_store',
     "rest_framework",
     'api',
-    'humanize'
+    'django.contrib.humanize',
+    'tinymce',
+
 ]
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "slate",
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,11 +136,13 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD ="django.db.models.BigAutoField"
 
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'digital_store/static'
+    BASE_DIR / 'digital_store' / 'static'
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+

@@ -9,36 +9,50 @@ from digital_store.models import Product, Category
 
 
 
-
-class MainPage(ListView):
-    model = Category
-    context_object_name = 'categories'
-    template_name = 'digital_store/index.html'
-    extra_context = {'title': 'Digital Store МАГАЗИН ТЕХНИКИ'}
-
-
-class ProductDetail(DetailView):
-    model = Product
-    context_object_name = 'product'
-
-    def get_context_data(self, **kwargs):
-        context = super(ProductDetail, self).get_context_data()
-        product = context['product']
-        context['title'] = context['product'].title
-        product.title = ' '.join(product.title.split(' ')[:-1])
-        context['same_brands'] = Product.objects.filter(brand=product.brand, title__icontains=product.title)
-        context['same_products'] = Product.objects.filter(category=product.category).exclude(pk=product.pk)
-        print(context['same_products'])
-        return context
+#
+# class MainPage(ListView):
+#     model = Category
+#     context_object_name = 'categories'
+#     template_name = 'digital_store/index.html'
+#     extra_context = {'title': 'Digital Store МАГАЗИН ТЕХНИКИ'}
+#
+#
 
 
 
+def product_list_view(request):
+    products = Product.objects.all()
+    context = {
+        'title': 'Digital Store',
+        'products': products
+    }
+
+    return render(request, 'digital_store/index.html', context)
 
 
 
+def product_detail_view(request, slug, id):
+    # It is for getting the product detail
+    product = get_object_or_404(Product, id=id)
+    # It is for getting similar products
+    products = Product.objects.filter(category=product.category).exclude(id=product.id)
+
+    context = {
+        'products': products,
+        'product': product
+    }
+
+    if product.slug != slug:
+        return redirect('product_detail', slug=product.slug, id=product.id)
+
+    return render(request, 'digital_store/product_detail.html', context)
+
+
+
+####################################################
 def get_category(request):
     categories = Category.objects.all().order_by('id')
-    return render(request, 'digital_store/form_list.html', {'categories': categories,'title': 'title'})
+    return render(request, 'digital_store/form_list.html', {'categories': categories, 'title': 'title'})
 
 
 
