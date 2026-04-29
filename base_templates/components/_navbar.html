@@ -1,0 +1,96 @@
+{% load digital_store_tags %}
+{% get_categories as categories %}
+{% get_brands as brands%}
+
+<div class="navbar">
+
+    <!-- LEFT -->
+    <div class="nav-left">
+
+        <button class="filter-btn" onclick="openFilters()">
+            ☰
+        </button>
+
+        <h2 class="logo">MyMarket</h2>
+
+    </div>
+
+    <!-- CENTER -->
+    <div class="nav-center">
+        <input type="text" placeholder="Search products...">
+    </div>
+
+    <!-- RIGHT -->
+    <div class="nav-right">
+        <a href="#">👤</a>
+        <a href="#">❤️</a>
+        <a href="#">🛒</a>
+        <a href="#">Login</a>
+    </div>
+
+</div>
+
+
+<!-- FILTER PANEL -->
+
+<div class="filter-panel" id="filterPanel">
+
+    <div class="filter-header">
+        <h3>Filters</h3>
+        <button onclick="closeFilters()">✕</button>
+    </div>
+
+    <div class="filter-body">
+
+        <form method="GET" action="{% url 'filter_products' %}">
+            <label>Категория</label>
+            <select name="category">
+                <option value="">Все</option>
+                {% for category in categories %}
+                <option value="{{ category.slug }}" >
+                    {{ category.title }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label>Бренд</label>
+            <select name="brand">
+                <option value="">Все</option>
+                {% for brand in brands %}
+                <option value="{{ brand.slug }}">{{ brand.title }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Price</label>
+
+            <input type="range" min="500000" max="100000000" value="100000000" id="priceRange" name="price">
+
+            <span id="priceValue"></span>
+            <button type="submit" class="apply-btn">Применить</button>
+
+
+
+
+
+            <script>
+const priceRange = document.getElementById("priceRange");
+const priceValue = document.getElementById("priceValue");
+
+priceRange.addEventListener("input", function() {
+    priceValue.textContent = this.value;
+});
+
+
+
+
+
+
+
+
+            </script>
+
+        </form>
+    </div>
+
+</div>
+

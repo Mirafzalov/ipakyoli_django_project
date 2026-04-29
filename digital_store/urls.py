@@ -3,8 +3,10 @@ from django.urls import path
 
 urlpatterns = [
     # path('', MainPage.as_view(), name='main'),
-    path('', product_list_view, name='products'),
+    path('home/', product_list_view, name='products'),
     path('product/<slug:slug>-<int:id>/', product_detail_view, name='product_detail'),
+    path('products/', product_filter_view, name='filter_products'),
+
     # path('product/<slug:slug>/', ProductDetail.as_view(), name='detail'),
 
     path('category_list/', get_category, name='category_list'),

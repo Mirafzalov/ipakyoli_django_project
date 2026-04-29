@@ -22,9 +22,16 @@ from digital_store.models import Product, Category
 
 def product_list_view(request):
     products = Product.objects.all()
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
+
+
+
     context = {
         'title': 'Digital Store',
-        'products': products
+        'products': products,
+        'categories': categories,
+        'brands': brands,
     }
 
     return render(request, 'digital_store/index.html', context)
@@ -49,7 +56,45 @@ def product_detail_view(request, slug, id):
 
 
 
-####################################################
+def product_filter_view(request):
+    products = Product.objects.all()
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
+
+    print(request.GET)
+
+    category = request.GET.get('category')
+    brand = request.GET.get('brand')
+    price = request.GET.get('price')
+
+    print(Product.objects.values_list('category__slug', flat=True))
+
+    if category:
+        products = products.filter(category__slug=category)
+
+    if brand:
+        products = products.filter(brand__slug=brand)
+
+    if price:
+        products = products.filter(price__lte=price)
+
+
+    context = {
+        'title': 'Digital Store',
+        'products': products,
+        # 'categories': categories,
+        # 'brands': brands
+    }
+
+    return render(request, 'digital_store/products.html', context)
+
+
+
+
+
+########################################################################################################
+
+
 def get_category(request):
     categories = Category.objects.all().order_by('id')
     return render(request, 'digital_store/form_list.html', {'categories': categories, 'title': 'title'})

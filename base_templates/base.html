@@ -19,16 +19,20 @@ function toggleHeart(el) {
 }
 </script>
 
-<body>
+<script>
+function openFilters() {
+    document.getElementById("filterPanel").classList.add("open");
+}
 
+function closeFilters() {
+    document.getElementById("filterPanel").classList.remove("open");
+}
+</script>
+
+<body>
 
 <!-- NAVBAR -->
 {% include 'components/_navbar.html' %}
-
-
-<!-- BANNER -->
-{% include 'components/_baner.html' %}
-
 
 {% block main %}
 

@@ -1,16 +1,11 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-
 {% block main %}
-<!-- BANNER -->
-{% include 'components/_baner.html' %}
-
 
 <div class="container">
-
+    {% if products %}
     <div class="product-grid">
-
         {% for product in products %}
 
         <div class="card">
@@ -54,8 +49,13 @@
         </div>
 
         {% endfor %}
-
     </div>
+    {% else %}
+    <div class="no-products">
+        <h2>Нет товаров 😕</h2>
+        <p>Выберите другую категорию.</p>
+    </div>
+    {% endif %}
 
 </div>
 {% endblock main %}
