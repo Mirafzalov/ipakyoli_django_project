@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main %}
+
+
+<div class="profile">
+
+    <!-- HEADER -->
+    <div class="profile-header">
+
+        <div class="left">
+
+            <img src="https://via.placeholder.com/100" class="avatar">
+
+            <div class="identity">
+
+    <h2>John Doe</h2>
+
+    <p>@johndoe</p>
+
+    <span class="meta">
+        Member since: 12 Jan 2025
+    </span>
+
+    <span class="status">Active account</span>
+
+</div>
+
+        </div>
+
+        <div class="right">
+            <button class="edit-btn">Edit profile</button>
+        </div>
+
+    </div>
+
+
+    <!-- BODY -->
+    <div class="profile-body">
+
+        <div class="info-item">
+            <div class="label">Phone</div>
+            <div class="value">+998 90 123 45 67</div>
+        </div>
+
+        <div class="info-item">
+            <div class="label">Address</div>
+            <div class="value">Tashkent, Uzbekistan</div>
+        </div>
+
+        <div class="info-item">
+            <div class="label">Email</div>
+            <div class="value">john@example.com</div>
+        </div>
+
+    </div>
+
+
+        <!-- STATS BLOCK -->
+    <div class="profile-stats">
+
+        <div class="stat">
+            <h3>12</h3>
+            <span>Orders</span>
+        </div>
+
+        <div class="stat">
+            <h3>5</h3>
+            <span>Wishlist</span>
+        </div>
+
+        <div class="stat">
+            <h3>3</h3>
+            <span>Cart</span>
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock main %}
+
+

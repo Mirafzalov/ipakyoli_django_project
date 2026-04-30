@@ -102,3 +102,19 @@ class Order(models.Model):
         verbose_name_plural = 'Заказы'
 
 
+
+class ProfileUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile/', verbose_name='Фото профиля')
+    address = models.TextField(max_length=100, verbose_name='Адрес')
+    created_at = models.DateTimeField(auto_now_add=True,  verbose_name='Дата добавление')
+
+
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Профиль пользователя'
+        verbose_name_plural = 'Профили пользователей'
+

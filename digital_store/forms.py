@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm
 from django_svg_image_form_field import SvgAndImageFormField
 from digital_store.models import *
 
@@ -23,39 +24,27 @@ class ProductForm(forms.ModelForm):
 
 
 
-class RegisterForm(forms.Form):
-    username = forms.CharField(label=False, widget=forms.TextInput(attrs={
-        'class': 'form-control'
-    }))
+class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(label=False, widget=forms.TextInput())
 
-    first_name = forms.CharField(label=False, widget=forms.TextInput(attrs={
-        'class': 'form-control'
-    }))
+    last_name = forms.CharField(label=False, widget=forms.TextInput())
 
-    last_name = forms.CharField(label=False, widget=forms.TextInput(attrs={
-        'class': 'form-control'
-    }))
+    email = forms.EmailField(label=False, widget=forms.EmailInput())
 
-    email = forms.EmailField(label=False, widget=forms.EmailInput(attrs={
-        'class': 'form-control'
-    }))
+    password1 = forms.CharField(label=False, widget=forms.PasswordInput())
 
-    password1 = forms.CharField(label=False, widget=forms.PasswordInput(attrs={
-        'class': 'form-control'
-    }))
+    password2 = forms.CharField(label=False, widget=forms.PasswordInput())
 
-    password2 = forms.CharField(label=False, widget=forms.PasswordInput(attrs={
-        'class': 'form-control'
-    }))
+    phone = forms.CharField(label=False, widget=forms.TextInput())
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(label=False, widget=forms.TextInput(attrs={
-        'class': 'form-control'
-    }))
+class LoginForm(AuthenticationForm):
+    username = UsernameField(label=False, widget=forms.TextInput())
 
-    password = forms.CharField(label=False, widget=forms.PasswordInput(attrs={
-        'class': 'form-control'
-    }))
+    password = forms.CharField(label=False, widget=forms.PasswordInput())
 
 

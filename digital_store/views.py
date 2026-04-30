@@ -3,13 +3,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 # Create your views here.
 from django.views.generic import DetailView, ListView
-
+from django.contrib import messages
 from digital_store.forms import *
 from digital_store.models import Product, Category
 
 
-
-#
 # class MainPage(ListView):
 #     model = Category
 #     context_object_name = 'categories'
@@ -19,13 +17,10 @@ from digital_store.models import Product, Category
 #
 
 
-
 def product_list_view(request):
     products = Product.objects.all()
     categories = Category.objects.all()
     brands = Brand.objects.all()
-
-
 
     context = {
         'title': 'Digital Store',
@@ -35,7 +30,6 @@ def product_list_view(request):
     }
 
     return render(request, 'digital_store/index.html', context)
-
 
 
 def product_detail_view(request, slug, id):
@@ -55,19 +49,12 @@ def product_detail_view(request, slug, id):
     return render(request, 'digital_store/product_detail.html', context)
 
 
-
 def product_filter_view(request):
     products = Product.objects.all()
-    categories = Category.objects.all()
-    brands = Brand.objects.all()
-
-    print(request.GET)
 
     category = request.GET.get('category')
     brand = request.GET.get('brand')
     price = request.GET.get('price')
-
-    print(Product.objects.values_list('category__slug', flat=True))
 
     if category:
         products = products.filter(category__slug=category)
@@ -78,17 +65,74 @@ def product_filter_view(request):
     if price:
         products = products.filter(price__lte=price)
 
-
     context = {
         'title': 'Digital Store',
         'products': products,
-        # 'categories': categories,
-        # 'brands': brands
     }
 
     return render(request, 'digital_store/products.html', context)
 
 
+# LOGIN AND REGISTER
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = LoginForm(request, request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+
+            if user:
+                login(request, user)
+                return redirect('home')
+
+        messages.error(request, 'Неверный логин или пароль')
+
+    else:
+        form = LoginForm()
+
+    return render(request, 'digital_store/login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            phone = form.cleaned_data['phone']
+            if User.objects.filter(username=phone).exists():
+                form.add_error('phone', 'Этот номер уже используется')
+            else:
+                user = form.save(commit=False)
+                user.username = phone
+                user.save()
+
+                login(request, user)
+                return redirect('home')
+
+        else:
+            messages.error(request, 'Ошибка при регистрации, пожалуйста заполните все поля или введите 8 значный пароль!')
+
+    else:
+        form = RegisterForm()
+
+    return render(request, 'digital_store/register.html', {'form': form})
+
+
+
+def profile_user_view(request):
+   return render(request, 'digital_store/profile.html')
 
 
 
@@ -100,12 +144,12 @@ def get_category(request):
     return render(request, 'digital_store/form_list.html', {'categories': categories, 'title': 'title'})
 
 
-
 def delete_category(request, id):
     category = get_object_or_404(Category, id=id)
     if request.method == "GET":
         category.delete()
     return redirect('category_list')
+
 
 def get_category_detail(request, id):
     if request.method == 'GET':
@@ -124,7 +168,6 @@ def get_category_detail(request, id):
         return redirect('category_list')
 
 
-
 def add_category(request):
     form = CategoryForm(request.POST, request.FILES)
     if request.method == 'POST':
@@ -136,37 +179,35 @@ def add_category(request):
         'form': form
     })
 
-
-# Login and Register
-
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('')
-
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        user = form
-        return redirect('main')
-
-def logout_view(request):
-    logout(request)
-    return redirect('main')
-
-
-def register_view(request):
-    if request.user.is_authenticated:
-        return redirect('login')
-    else:
-        if request.method == 'POST':
-            form = RegisterForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-                login(request, user)
-                return redirect('')
-        else:
-            form = RegisterForm()
-
-    return render(request, 'digital_store/register.html', {'title': 'Регистрация',  'reg_form': form})
-
-
-
+# # Login and Register
+#
+# def login_view(request):
+#     if request.user.is_authenticated:
+#         return redirect('')
+#
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         user = form
+#         return redirect('main')
+#
+# def logout_view(request):
+#     logout(request)
+#     return redirect('main')
+#
+#
+# def register_view(request):
+#     if request.user.is_authenticated:
+#         return redirect('login')
+#     else:
+#         if request.method == 'POST':
+#             form = RegisterForm(request.POST)
+#             if form.is_valid():
+#                 user = form.save()
+#                 login(request, user)
+#                 return redirect('')
+#         else:
+#             form = RegisterForm()
+#
+#     return render(request, 'digital_store/register.html', {'title': 'Регистрация',  'reg_form': form})
+#
+#
