@@ -10,6 +10,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('profile/', profile_user_view, name='profile'),
+    path('settings/', edit_password_view, name='settings'),
 
     # path('product/<slug:slug>/', ProductDetail.as_view(), name='detail'),
 

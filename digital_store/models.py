@@ -105,14 +105,20 @@ class Order(models.Model):
 
 class ProfileUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='profile/', verbose_name='Фото профиля')
-    address = models.TextField(max_length=100, verbose_name='Адрес')
+    image = models.ImageField(upload_to='profile/', verbose_name='Фото профиля', blank=True)
     created_at = models.DateTimeField(auto_now_add=True,  verbose_name='Дата добавление')
+
+
+    def get_image(self):
+        if self.image:
+            return self.image.url
+        else:
+            self.image.url = 'https://i.pinimg.com/originals/5f/91/41/5f91413c8a9e766a5139c6cfe5caa837.jpg'
 
 
 
     def __str__(self):
-        return self.title
+        return self.user.first_name
 
     class Meta:
         verbose_name = 'Профиль пользователя'

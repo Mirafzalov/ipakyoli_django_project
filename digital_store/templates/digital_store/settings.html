@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+
+<div class="security-page">
+
+    <h2 class="page-title">Настройки</h2>
+
+    <!-- ACCOUNT INFO -->
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- PASSWORD -->
+        <div class="security-card">
+
+            <h3 style="color: #1e3a8a; padding-bottom: 10px">Изменить пароль</h3>
+
+            <div class="field">
+                <label>Пароль</label>
+                <input type="password" name="old_password">
+            </div>
+
+            <div class="field">
+                <label>Новый пароль</label>
+                <input type="password" name="new_password1">
+            </div>
+
+            <div class="field">
+                <label>Подтвердить новый пароль</label>
+                <input type="password" name="new_password2">
+            </div>
+
+        </div>
+
+        <button type="submit" class="save-btn">
+            Применить изменение
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

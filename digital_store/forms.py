@@ -48,3 +48,18 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(label=False, widget=forms.PasswordInput())
 
 
+
+# For editing the personal info in Profilex
+# class EditAccountForm(forms.ModelForm):
+#     phone = forms.CharField(label=False, widget=forms.TextInput())
+#
+#     password1 = forms.CharField(label=False, widget=forms.PasswordInput())
+#
+#     password2 = forms.CharField(label=False, widget=forms.PasswordInput())
+#
+#     class Meta:
+#         model = User
+#         fields = ('password1', 'password2')
+#
+#
+# 3

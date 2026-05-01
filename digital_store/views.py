@@ -1,11 +1,12 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 # Create your views here.
 from django.views.generic import DetailView, ListView
 from django.contrib import messages
 from digital_store.forms import *
-from digital_store.models import Product, Category
+from digital_store.models import Product, Category, ProfileUser
 
 
 # class MainPage(ListView):
@@ -117,12 +118,13 @@ def register_view(request):
                 user = form.save(commit=False)
                 user.username = phone
                 user.save()
-
+                ProfileUser.objects.create(user=user)
                 login(request, user)
                 return redirect('home')
 
         else:
-            messages.error(request, 'Ошибка при регистрации, пожалуйста заполните все поля или введите 8 значный пароль!')
+            messages.error(request,
+                           'Ошибка при регистрации, пожалуйста заполните все поля или введите 8 значный пароль!')
 
     else:
         form = RegisterForm()
@@ -130,9 +132,51 @@ def register_view(request):
     return render(request, 'digital_store/register.html', {'form': form})
 
 
-
 def profile_user_view(request):
-   return render(request, 'digital_store/profile.html')
+    user = request.user
+    profile = ProfileUser.objects.get(user=user)
+    edit = request.GET.get('edit') == 'true'
+
+    if request.method == 'POST':
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        user.username = request.POST.get('phone')
+
+        if request.FILES.get('image'):
+            profile.image = request.FILES.get('image')
+
+        user.save()
+        profile.save()
+
+
+        return redirect('profile')
+
+    context = {
+        'profile': profile,
+        'edit': edit,
+        'user': user,
+    }
+
+    return render(request, 'digital_store/profile.html', context)
+
+
+
+
+
+def edit_password_view(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            update_session_auth_hash(request, user)
+            return redirect('home')
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, 'digital_store/settings.html', {'form': form})
 
 
 

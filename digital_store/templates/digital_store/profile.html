@@ -1,85 +1,134 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block main %}
-
 
 <div class="profile">
 
-    <!-- HEADER -->
+    <!-- HEADER (DISPLAY ONLY) -->
     <div class="profile-header">
 
         <div class="left">
 
-            <img src="https://via.placeholder.com/100" class="avatar">
+            <img src="{{ profile.get_image }}" class="avatar">
 
             <div class="identity">
 
-    <h2>John Doe</h2>
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <p>{{ user.email }}</p>
 
-    <p>@johndoe</p>
+                <span class="status">Active account</span>
 
-    <span class="meta">
-        Member since: 12 Jan 2025
-    </span>
-
-    <span class="status">Active account</span>
-
-</div>
+            </div>
 
         </div>
 
         <div class="right">
-            <button class="edit-btn">Edit profile</button>
+            <a href="/profile/?edit=true" class="edit-btn">Редактировать</a>
         </div>
 
     </div>
 
+    <!-- EDIT FORM -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <!-- BODY -->
-    <div class="profile-body">
+        <div class="profile-body">
 
-        <div class="info-item">
-            <div class="label">Phone</div>
-            <div class="value">+998 90 123 45 67</div>
+            <!-- PHOTO -->
+            {% if edit %}
+            <div class="info-item image-edit">
+                <div class="label">Фото профиля</div>
+
+                <div class="image-upload">
+
+                    <img src="https://via.placeholder.com/100"
+                         class="preview-avatar">
+
+                    <input type="file"
+                           name="image"
+                           class="file-input"
+                           {% if not edit %}disabled{% endif %}>
+
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- FIRST NAME -->
+            <div class="info-item">
+                <div class="label">Имя</div>
+                <input type="text"
+                       name="first_name"
+                       value="{{ user.first_name }}"
+                       class="info-input"
+                       {% if not edit %}readonly{% endif %}>
+            </div>
+
+            <!-- LAST NAME -->
+            <div class="info-item">
+                <div class="label">Фамилия</div>
+                <input type="text"
+                       name="last_name"
+                       value="{{ user.last_name }}"
+                       class="info-input"
+                       {% if not edit %}readonly{% endif %}>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="info-item">
+                <div class="label">Почта</div>
+                <input type="email"
+                       name="email"
+                       value="{{ user.email }}"
+                       class="info-input"
+                       {% if not edit %}readonly{% endif %}>
+            </div>
+
+            <!-- PHONE -->
+            <div class="info-item">
+                <div class="label">Phone</div>
+                <input type="text"
+                       name="phone"
+                       value="{{ user.username }}"
+                       class="info-input"
+                       {% if not edit %}readonly{% endif %}>
+            </div>
+
+
+
+            {% if edit %}
+            <button type="submit" class="save-btn" style="">
+                Сохранить
+            </button>
+            {% endif %}
+
         </div>
 
-        <div class="info-item">
-            <div class="label">Address</div>
-            <div class="value">Tashkent, Uzbekistan</div>
-        </div>
+    </form>
 
-        <div class="info-item">
-            <div class="label">Email</div>
-            <div class="value">john@example.com</div>
-        </div>
-
-    </div>
-
-
-        <!-- STATS BLOCK -->
+    <!-- STATS -->
     <div class="profile-stats">
 
         <div class="stat">
+            <span>Заказы</span>
             <h3>12</h3>
-            <span>Orders</span>
+
         </div>
 
         <div class="stat">
+            <span>Любимые товары</span>
             <h3>5</h3>
-            <span>Wishlist</span>
+
         </div>
 
         <div class="stat">
+            <span>Корзина</span>
             <h3>3</h3>
-            <span>Cart</span>
+
         </div>
 
     </div>
 
-
 </div>
-{% endblock main %}
 
-
+{% endblock %}

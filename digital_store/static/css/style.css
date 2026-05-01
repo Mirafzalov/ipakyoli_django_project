@@ -908,7 +908,7 @@ body {
 
 /* PROFILE PAGE */
 
-/* PROFILE BASE */
+
 .profile {
     max-width: 900px;
     margin: 60px auto;
@@ -928,7 +928,6 @@ body {
     box-shadow: 0 5px 15px rgba(0,0,0,0.06);
 }
 
-/* LEFT */
 .profile-header .left {
     display: flex;
     align-items: center;
@@ -963,16 +962,69 @@ body {
 /* BUTTON */
 .edit-btn {
     padding: 10px 18px;
-    border: none;
     border-radius: 8px;
-
     background: #1e3a8a;
     color: white;
-
-    cursor: pointer;
+    text-decoration: none;
 }
 
-/* 🔥 STATS BLOCK */
+/* BODY */
+.profile-body {
+    margin-top: 20px;
+    padding: 25px;
+
+    background: white;
+    border-radius: 12px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+}
+
+/* ROW */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.label {
+    min-width: 120px;
+    color: #6b7280;
+}
+
+/* INPUT LOOKS LIKE TEXT */
+.info-input {
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: right;
+    width: 250px;
+    outline: none;
+}
+
+.info-input:focus {
+    border-bottom: 1px solid #1e3a8a;
+}
+
+/* IMAGE UPLOAD */
+.image-upload {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.preview-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #1e3a8a;
+}
+
+/* STATS */
 .profile-stats {
     display: flex;
     justify-content: space-between;
@@ -993,52 +1045,72 @@ body {
 
 .stat h3 {
     margin: 0;
-    font-size: 20px;
     color: #1e3a8a;
 }
 
-.stat span {
-    font-size: 13px;
-    color: #6b7280;
+
+
+/*PASSWORD AND LOGIN CHANGE*/
+
+
+.security-page {
+    max-width: 700px;
+    margin: 60px auto;
+    font-family: Arial;
 }
 
-/* BODY */
-.profile-body {
-    margin-top: 20px;
-    padding: 25px;
+/* TITLE */
+.page-title {
+    margin-bottom: 20px;
+}
 
+/* CARD */
+.security-card {
     background: white;
-    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
 
+    border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.06);
 }
 
-/* INFO ROW */
-.info-item {
+/* FIELD */
+.field {
     display: flex;
-    justify-content: space-between;
-
-    padding: 16px 0;
-    border-bottom: 1px solid #eee;
+    flex-direction: column;
+    margin-bottom: 15px;
 }
 
-.info-item:last-child {
-    border-bottom: none;
-}
-
-.label {
-    font-size: 14px;
+.field label {
+    font-size: 13px;
     color: #6b7280;
+    margin-bottom: 5px;
 }
 
-.value {
+.field input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 14px;
+}
+
+.field input:focus {
+    border-color: #1e3a8a;
+}
+
+/* BUTTON */
+.save-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+
+    background: #1e3a8a;
+    color: white;
     font-size: 15px;
-    font-weight: 500;
+
+    cursor: pointer;
 }
 
-.meta {
-    display: block;
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: 3px;
-}
+
