@@ -137,29 +137,33 @@ def profile_user_view(request):
     profile = ProfileUser.objects.get(user=user)
     edit = request.GET.get('edit') == 'true'
 
+    error = None
+
     if request.method == 'POST':
-        user.first_name = request.POST.get('first_name')
-        user.last_name = request.POST.get('last_name')
-        user.email = request.POST.get('email')
-        user.username = request.POST.get('phone')
+        phone = request.POST.get('phone')
+        if User.objects.exclude(id=user.id).filter(username=phone).exists():
+            error = 'Этот номер уже используется'
 
-        if request.FILES.get('image'):
-            profile.image = request.FILES.get('image')
+        else:
+            user.username = phone
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
 
-        user.save()
-        profile.save()
+            if request.FILES.get('image'):
+                profile.image = request.FILES.get('image')
 
+            user.save()
+            profile.save()
 
-        return redirect('profile')
+            return redirect('profile')  # ✔ only after success
 
-    context = {
+    return render(request, 'digital_store/profile.html', {
         'profile': profile,
         'edit': edit,
         'user': user,
-    }
-
-    return render(request, 'digital_store/profile.html', context)
-
+        'error': error,
+    })
 
 
 

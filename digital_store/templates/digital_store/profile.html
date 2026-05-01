@@ -85,8 +85,12 @@
             </div>
 
             <!-- PHONE -->
+
             <div class="info-item">
-                <div class="label">Phone</div>
+                <div class="label">Телефон номер</div>
+                {% if error %}
+                <p style="font-size: 15px; color: red;">{{ error }}</p>
+                {% endif %}
                 <input type="text"
                        name="phone"
                        value="{{ user.username }}"
@@ -95,11 +99,12 @@
             </div>
 
 
-
             {% if edit %}
-            <button type="submit" class="save-btn" style="">
-                Сохранить
-            </button>
+
+                <button type="submit" class="save-btn" style="">
+                    Сохранить
+                </button>
+
             {% endif %}
 
         </div>
