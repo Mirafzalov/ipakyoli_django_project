@@ -156,7 +156,7 @@ def profile_user_view(request):
             user.save()
             profile.save()
 
-            return redirect('profile')  # ✔ only after success
+            return redirect('profile')
 
     return render(request, 'digital_store/profile.html', {
         'profile': profile,
