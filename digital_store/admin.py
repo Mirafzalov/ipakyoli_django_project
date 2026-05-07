@@ -15,6 +15,8 @@ from .models import *
 # admin.site.register(Characteristic)
 admin.site.register(Order)
 admin.site.register(ProfileUser)
+admin.site.register(Cart)
+admin.site.register(ProductCart)
 
 
 

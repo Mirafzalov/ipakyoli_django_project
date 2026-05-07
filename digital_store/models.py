@@ -51,7 +51,6 @@ class Product(models.Model):
     discount = models.IntegerField(default=0, verbose_name='Скидка на товар')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория', related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Бренд', related_name='brand')
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Продавец', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     characteristic = HTMLField(blank=True)
 
@@ -87,8 +86,75 @@ class ProductImage(models.Model):
 
 
 
+class ProfileUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile/', verbose_name='Фото профиля', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,  verbose_name='Дата добавление')
+
+
+    def get_image(self):
+        if self.image:
+            return self.image.url
+        else:
+            return 'https://i.pinimg.com/originals/5f/91/41/5f91413c8a9e766a5139c6cfe5caa837.jpg'
+
+
+
+
+    def __str__(self):
+        return self.user.first_name
+
+    class Meta:
+        verbose_name = 'Профиль пользователя'
+        verbose_name_plural = 'Профили пользователей'
+
+
+
+# Корзина
+
+
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создание')
+
+    def __str__(self):
+        return f'Корзина покупателя № {self.user}'
+
+    class Meta:
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
+
+
+
+class ProductCart(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
+    quantity = models.IntegerField(default=1, verbose_name='Количество')
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменение')
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='Корзина')
+
+
+    @property
+    def per_total_price(self):
+        if self.product.discount:
+            return self.product.discount_price() * self.quantity
+        else:
+            return self.product.price * self.quantity
+
+
+
+
+    def __str__(self):
+        return f'Товар:{self.product.title}, Количество:{self.quantity}'
+
+    class Meta:
+        verbose_name = 'Товар в корзине '
+        verbose_name_plural = 'Товары корзин'
+
+
+# Заказы
 class Order(models.Model):
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
     quantity = models.IntegerField(default=10, verbose_name='Количества товара')
     status = models.CharField(max_length=30, choices=[('pending', 'Pending'), ('confirmed', 'Confirmed'), ('cancelled', 'Cancelled')], default='pending')
@@ -100,27 +166,3 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
-
-
-
-class ProfileUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='profile/', verbose_name='Фото профиля', blank=True)
-    created_at = models.DateTimeField(auto_now_add=True,  verbose_name='Дата добавление')
-
-
-    def get_image(self):
-        if self.image:
-            return self.image.url
-        else:
-            self.image.url = 'https://i.pinimg.com/originals/5f/91/41/5f91413c8a9e766a5139c6cfe5caa837.jpg'
-
-
-
-    def __str__(self):
-        return self.user.first_name
-
-    class Meta:
-        verbose_name = 'Профиль пользователя'
-        verbose_name_plural = 'Профили пользователей'
-

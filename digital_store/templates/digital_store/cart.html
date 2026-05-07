@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block main %}
+<div class="cart-page">
+
+    <h2 class="cart-title">Ваша корзина</h2>
+
+    <div class="cart-container">
+
+        <!-- LEFT: ITEMS -->
+        <div class="cart-items">
+
+            {% for product_cart in products_cart %}
+            <!-- ITEM -->
+            <div class="cart-item">
+
+                <img src="{{ product_cart.product.images.first.image.url }}" class="cart-img">
+
+                <div class="cart-info">
+                    <h4>{{ product_cart.product.title }}</h4>
+                    {% if product_cart.product.discount %}
+
+                    <span class="new-price">{{ product_cart.product.discount_price|intcomma }} сум</span>
+                    <span class="old-price">{{ product_cart.product.price|intcomma }} сум</span>
+
+                    <div class="discount-badge">
+                        -{{ product_cart.product.discount }}%
+                    </div>
+                    {% else %}
+                    <span class="new-price">{{ product_cart.product.price|intcomma }} сум</span>
+
+                    {% endif %}
+
+
+                </div>
+
+                <div class="cart-qty">
+                    <button>-</button>
+                    <span>{{ product_cart.quantity }}</span>
+                    <button>+</button>
+                </div>
+
+                <div class="cart-total">
+                    {% if product_cart.product.discount %}
+
+                    {{ product_cart.per_total_price|intcomma }}
+
+                    {% else %}
+
+                    {{ product_cart.per_total_price|intcomma }}
+
+                    {% endif %}
+                </div>
+                <a href="{% url  'cart_delete' product_cart.product.slug %}">
+                <button class="remove-btn">✕</button>
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- RIGHT: SUMMARY -->
+        <div class="cart-summary">
+
+            <h3 style="padding-bottom: 20px; color: #1e3a8a; font-size: 23px;">Итог заказа</h3>
+
+            <div class="summary-row">
+                <span>Количество товаров</span>
+                <strong>3</strong>
+            </div>
+
+            <div class="summary-row">
+                <span style="">Итоговая сумма</span>
+                <strong>19 000 000 сум</strong>
+            </div>
+
+            <button class="checkout-btn">
+                Proceed to Checkout
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock main %}

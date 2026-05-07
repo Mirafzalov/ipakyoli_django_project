@@ -184,7 +184,52 @@ def edit_password_view(request):
 
 
 
-########################################################################################################
+# Корзина
+
+
+
+
+def add_product_view(request, slug):
+    user = request.user
+    product = Product.objects.get(slug=slug)
+
+    cart, created = Cart.objects.get_or_create(user=user)
+    product_cart, product_created = ProductCart.objects.get_or_create(cart=cart, product=product)
+
+
+    print(product_cart)
+
+    if product_created == False:
+        product_cart.quantity += 1
+        product_cart.save()
+
+    return redirect('home')
+
+
+
+def cart_view(request):
+    user = request.user
+    cart = get_object_or_404(Cart, user=user)
+    products_cart = cart.productcart_set.all()
+    print(products_cart)
+
+
+    context = {
+        'products_cart': products_cart,
+    }
+
+    return render(request, 'digital_store/cart.html', context)
+
+
+def cart_delete(request, slug):
+    user = request.user
+    cart = get_object_or_404(Cart, user=user)
+    clear_product = ProductCart.objects.get(cart=cart, product__slug=slug)
+    clear_product.delete()
+
+    return redirect('cart')
+
+####################################################################################################
 
 
 def get_category(request):
