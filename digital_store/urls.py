@@ -11,9 +11,10 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('profile/', profile_user_view, name='profile'),
     path('settings/', edit_password_view, name='settings'),
-    path('add_cart/<slug:slug>/',  add_product_view, name='add_cart'),
+    path('add_cart/<slug:slug>/<str:action>/',  add_cart_view, name='add_cart'),
+    path('change_cart/<slug:slug>/<str:action>/', change_cart_view, name='change_cart'),
     path('cart/', cart_view, name='cart'),
-    path('cart/delete/<slug:slug>/', cart_delete, name='cart_delete'),
+    # path('cart/delete/<slug:slug>/', cart_product_delete, name='cart_delete'),
 
 
     # path('product/<slug:slug>/', ProductDetail.as_view(), name='detail'),

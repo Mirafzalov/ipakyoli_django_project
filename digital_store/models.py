@@ -117,13 +117,27 @@ class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создание')
 
+    @property
+    def total_quantity(self):
+        total_quantity = 0
+        for p in self.productcart_set.all():
+            total_quantity += p.quantity
+        return total_quantity
+
+    @property
+    def total_price(self):
+        total_price = 0
+        for p in self.productcart_set.all():
+            total_price += p.per_total_price
+        return total_price
+
+
     def __str__(self):
         return f'Корзина покупателя № {self.user}'
 
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
-
 
 
 class ProductCart(models.Model):
@@ -140,7 +154,6 @@ class ProductCart(models.Model):
             return self.product.discount_price() * self.quantity
         else:
             return self.product.price * self.quantity
-
 
 
 

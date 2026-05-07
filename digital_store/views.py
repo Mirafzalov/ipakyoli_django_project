@@ -16,6 +16,7 @@ from digital_store.models import Product, Category, ProfileUser
 #     extra_context = {'title': 'Digital Store МАГАЗИН ТЕХНИКИ'}
 #
 #
+from digital_store.utils import CartAddDelete
 
 
 def product_list_view(request):
@@ -184,50 +185,39 @@ def edit_password_view(request):
 
 
 
-# Корзина
+####### Корзина
 
-
-
-
-def add_product_view(request, slug):
-    user = request.user
-    product = Product.objects.get(slug=slug)
-
-    cart, created = Cart.objects.get_or_create(user=user)
-    product_cart, product_created = ProductCart.objects.get_or_create(cart=cart, product=product)
-
-
-    print(product_cart)
-
-    if product_created == False:
-        product_cart.quantity += 1
-        product_cart.save()
-
+def add_cart_view(request, slug, action):
+    cart_class = CartAddDelete(request)
+    cart_class = cart_class.change_cart(slug, action)
     return redirect('home')
 
+# Изменить продукты в корзину
+def change_cart_view(request, slug, action):
+    cart_class = CartAddDelete(request)
+    cart_class = cart_class.change_cart(slug, action)
 
+    return redirect('cart')
 
+# Просмотр корзины
 def cart_view(request):
-    user = request.user
-    cart = get_object_or_404(Cart, user=user)
-    products_cart = cart.productcart_set.all()
-    print(products_cart)
-
-
-    context = {
-        'products_cart': products_cart,
-    }
+    cart_class = CartAddDelete(request)
+    context = cart_class.cart_view()
 
     return render(request, 'digital_store/cart.html', context)
 
 
-def cart_delete(request, slug):
-    user = request.user
-    cart = get_object_or_404(Cart, user=user)
-    clear_product = ProductCart.objects.get(cart=cart, product__slug=slug)
-    clear_product.delete()
 
-    return redirect('cart')
+# Удаление продуктов в корзине
+# def cart_product_delete(request, slug, action):
+#     user = request.user
+#     cart = get_object_or_404(Cart, user=user)
+#     product_cart = ProductCart.objects.get(cart=cart, product__slug=slug)
+#
+#
+#     product_cart.delete()
+#
+#     return redirect('cart')
 
 ####################################################################################################
 
