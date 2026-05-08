@@ -14,6 +14,7 @@ urlpatterns = [
     path('add_cart/<slug:slug>/<str:action>/',  add_cart_view, name='add_cart'),
     path('change_cart/<slug:slug>/<str:action>/', change_cart_view, name='change_cart'),
     path('cart/', cart_view, name='cart'),
+    path('order/', get_page_checkout, name='order'),
     # path('cart/delete/<slug:slug>/', cart_product_delete, name='cart_delete'),
 
 

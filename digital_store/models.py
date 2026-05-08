@@ -165,13 +165,30 @@ class ProductCart(models.Model):
         verbose_name_plural = 'Товары корзин'
 
 
+
+class Delivery(models.Model):
+    address = models.CharField(max_length=100, verbose_name='Адрес')
+    comment = models.TextField(max_length=50, verbose_name='Комментария', blank=True, null=True)
+
+
+    def __str__(self):
+       return f'Адрес: {self.address}'
+
+
+    class Meta:
+        verbose_name = 'Доставка заказа'
+        verbose_name_plural = 'Доставки заказ'
+
+
+
 # Заказы
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
-    quantity = models.IntegerField(default=10, verbose_name='Количества товара')
-    status = models.CharField(max_length=30, choices=[('pending', 'Pending'), ('confirmed', 'Confirmed'), ('cancelled', 'Cancelled')], default='pending')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
+    price = models.IntegerField(verbose_name='Цена заказа')
+    delivery = models.OneToOneField(Delivery, on_delete=models.CASCADE, verbose_name='Доставка')
+    status = models.CharField(max_length=30, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата заказа')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата оплаты заказа')
 
     def __str__(self):
         return self.title
@@ -179,3 +196,20 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+
+
+class ProductOrder(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
+    quantity = models.IntegerField(verbose_name='Количества товаров')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
+
+
+    def __str__(self):
+        return f'Товар {self.product.title}, заказа №: {self.order.id}, покупателя {self.order.user.username}'
+
+
+    class Meta:
+        verbose_name = 'Товар заказа'
+        verbose_name_plural = 'Товары заказ'
+

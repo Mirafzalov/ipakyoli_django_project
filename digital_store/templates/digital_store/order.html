@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+
+{% block main %}
+<div class="checkout">
+
+    <h2 class="checkout__title">Checkout</h2>
+
+    <div class="checkout__grid">
+
+        <!-- USER -->
+        <div class="checkout__card checkout__card--user">
+            <h3 class="checkout__card-title">Ваше данные</h3>
+
+            <div class="checkout__info">
+                <p><b>Name:</b>{{  }}</p>
+                <p><b>Phone:</b> +998 90 123 45 67</p>
+            </div>
+        </div>
+
+        <!-- DELIVERY -->
+        <div class="checkout__card checkout__card--form">
+
+            <h3 class="checkout__card-title">Дотсавка</h3>
+
+            <form class="checkout__form">
+
+                <label class="checkout__label">Адрес</label>
+                <input class="checkout__input" type="text">
+
+                <label class="checkout__label">Комментарий</label>
+                <textarea class="checkout__textarea"></textarea>
+
+            </form>
+
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="checkout__card checkout__card--summary">
+
+            <h3 class="checkout__card-title">Итог</h3>
+
+            <div class="checkout__line">
+                <span>Количество товаров</span>
+                <b>3</b>
+            </div>
+
+            <div class="checkout__line">
+                <span>Subtotal</span>
+                <b>19 000 000</b>
+            </div>
+
+            <div class="checkout__line checkout__line--total">
+                <span>Итоговая сумма</span>
+                <b>19 000 000</b>
+            </div>
+
+            <button class="checkout__btn">Place Order</button>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock main %}

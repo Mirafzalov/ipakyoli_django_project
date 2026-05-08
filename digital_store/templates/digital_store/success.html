@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+
+{% block main %}
+
+<div class="success-page">
+
+    <div class="success-card">
+
+        <!-- ICON -->
+        <div class="icon">✓</div>
+
+        <h1>Order Successful!</h1>
+
+        <p>Your payment has been processed successfully.</p>
+
+        <div class="info">
+
+            <div class="info-row">
+                <span>Order ID</span>
+                <b>#12345</b>
+            </div>
+
+            <div class="info-row">
+                <span>Status</span>
+                <b class="status">Paid</b>
+            </div>
+
+            <div class="info-row">
+                <span>Delivery</span>
+                <b>Processing</b>
+            </div>
+
+        </div>
+
+        <div class="buttons">
+
+            <button class="primary">View Orders</button>
+            <button class="secondary">Continue Shopping</button>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock main %}

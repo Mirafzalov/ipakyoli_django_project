@@ -37,11 +37,11 @@
 
                 <div class="cart-qty">
                     <a href="{% url 'change_cart' product_cart.product.slug 'delete' %}">
-                    <button>-</button>
+                        <button>-</button>
                     </a>
                     <span>{{ product_cart.quantity }}</span>
                     <a href="{% url 'change_cart' product_cart.product.slug 'add' %}">
-                    <button>+</button>
+                        <button>+</button>
                     </a>
                 </div>
 
@@ -57,7 +57,7 @@
                     {% endif %}
                 </div>
                 <a href="{% url 'change_cart' product_cart.product.slug 'clear' %}">
-                <button class="remove-btn">✕</button>
+                    <button class="remove-btn">✕</button>
                 </a>
             </div>
             {% endfor %}
@@ -78,10 +78,11 @@
                 <span style="">Итоговая сумма</span>
                 <strong>{{ cart.total_price|intcomma }} сум</strong>
             </div>
-
-            <button class="checkout-btn" style="font-size: 15px">
-                Оформить заказ
-            </button>
+            <a href="{% url 'order' %}">
+                <button class="checkout-btn" style="font-size: 15px">
+                    Оформить заказ
+                </button>
+            </a>
 
         </div>
 

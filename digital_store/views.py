@@ -208,16 +208,19 @@ def cart_view(request):
 
 
 
-# Удаление продуктов в корзине
-# def cart_product_delete(request, slug, action):
-#     user = request.user
-#     cart = get_object_or_404(Cart, user=user)
-#     product_cart = ProductCart.objects.get(cart=cart, product__slug=slug)
-#
-#
-#     product_cart.delete()
-#
-#     return redirect('cart')
+def get_page_checkout(request):
+    if request.method == 'POST':
+        order_class = CartAddDelete(request)
+        order_class.checkout_view(request)
+        return redirect('success')
+
+        context = {
+            'user': user,
+        }
+    return render(request, 'digital_store/order.html', context)
+
+
+
 
 ####################################################################################################
 

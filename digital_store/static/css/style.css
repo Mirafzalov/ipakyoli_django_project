@@ -1247,3 +1247,269 @@ body {
     border-radius: 8px;
     cursor: pointer;
 }
+
+
+/* CHECKOUT */
+
+/* RESET */
+* {
+    box-sizing: border-box;
+}
+
+/* PAGE WRAPPER */
+.checkout {
+    max-width: 1100px;
+    margin: 50px auto;
+}
+
+/* TITLE */
+.checkout__title {
+    font-size: 26px;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* GRID (EQUAL HEIGHT FIX HERE) */
+.checkout__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+
+    align-items: stretch; /* 🔥 makes all cards equal height */
+}
+
+/* CARD (UNIFORM SIZE FIX) */
+.checkout__card {
+    background: #fff;
+    padding: 22px;
+
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+
+    min-width: 0;
+
+    height: 100%; /* 🔥 forces equal height */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* CARD TITLE */
+.checkout__card-title {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #0f172a;
+
+}
+
+/* USER INFO */
+.checkout__info p {
+    margin: 8px 0;
+    color: #6b7280;
+    padding-bottom: 10px;
+}
+
+.checkout__info b {
+    color: #111827;
+}
+
+/* FORM */
+.checkout__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* LABEL */
+.checkout__label {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* INPUT */
+.checkout__input {
+    width: 100%;
+    padding: 12px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    outline: none;
+}
+
+/* TEXTAREA (NO MOVING FIX) */
+.checkout__textarea {
+    width: 100%;
+    height: 90px;
+
+    padding: 12px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    outline: none;
+
+    resize: none; /* 🔥 prevents user resize */
+}
+
+/* SUMMARY ROW */
+.checkout__line {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 10px 0;
+
+    color: #6b7280;
+}
+
+/* TOTAL */
+.checkout__line--total {
+    margin-top: 15px;
+    padding-top: 15px;
+
+    border-top: 1px solid #e5e7eb;
+
+    font-size: 18px;
+    color: #111827;
+}
+
+/* PUSH BUTTON TO BOTTOM (IMPORTANT FOR EQUAL CARDS LOOK) */
+.checkout__btn {
+    margin-top: auto; /* 🔥 pushes button to bottom */
+
+    width: 100%;
+    padding: 14px;
+
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+
+    border: none;
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+/* SMALL HOVER EFFECT */
+.checkout__card {
+    transition: 0.2s ease;
+}
+
+.checkout__card:hover {
+    transform: translateY(-3px);
+}
+
+
+
+/* Success order */
+
+
+
+/* RESET */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6fb;
+}
+
+/* CENTER PAGE */
+.success-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CARD */
+.success-card {
+    background: white;
+    padding: 40px;
+
+    width: 420px;
+    text-align: center;
+
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* ICON */
+.icon {
+    width: 70px;
+    height: 70px;
+
+    margin: 0 auto 20px auto;
+
+    background: #16a34a;
+    color: white;
+
+    font-size: 32px;
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TEXT */
+h1 {
+    margin-bottom: 10px;
+}
+
+p {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+/* INFO */
+.info {
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 8px 0;
+    color: #6b7280;
+}
+
+.status {
+    color: #16a34a;
+}
+
+/* BUTTONS */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.primary {
+    padding: 12px;
+
+    background: #1e3a8a;
+    color: white;
+
+    border: none;
+    border-radius: 12px;
+
+    cursor: pointer;
+}
+
+.secondary {
+    padding: 12px;
+
+    background: #e5e7eb;
+    color: #111827;
+
+    border: none;
+    border-radius: 12px;
+
+    cursor: pointer;
+}
