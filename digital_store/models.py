@@ -51,7 +51,7 @@ class Product(models.Model):
     discount = models.IntegerField(default=0, verbose_name='Скидка на товар')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория', related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Бренд', related_name='brand')
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name='Доступно на складе')
     characteristic = HTMLField(blank=True)
 
 
@@ -165,48 +165,52 @@ class ProductCart(models.Model):
         verbose_name_plural = 'Товары корзин'
 
 
-
-class Delivery(models.Model):
-    address = models.CharField(max_length=100, verbose_name='Адрес')
-    comment = models.TextField(max_length=50, verbose_name='Комментария', blank=True, null=True)
-
-
-    def __str__(self):
-       return f'Адрес: {self.address}'
-
-
-    class Meta:
-        verbose_name = 'Доставка заказа'
-        verbose_name_plural = 'Доставки заказ'
-
-
-
 # Заказы
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель')
     price = models.IntegerField(verbose_name='Цена заказа')
-    delivery = models.OneToOneField(Delivery, on_delete=models.CASCADE, verbose_name='Доставка')
     status = models.CharField(max_length=30, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата заказа')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата оплаты заказа')
 
+    address = models.CharField(max_length=100, verbose_name='Адрес', blank=True)
+    comment = models.TextField(max_length=50, verbose_name='Комментария', blank=True, null=True)
+
     def __str__(self):
-        return self.title
+        return f'Заказ Пользователя {self.user.first_name}, Дата Заказа: {self.created_at}'
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
 
+
+    @property
+    def total_quantity(self):
+        total_quantity = 0
+        for p in self.productcart_set.all():
+            total_quantity += p.quantity
+        return total_quantity
+
+    @property
+    def total_price(self):
+        total_price = 0
+        for p in self.productcart_set.all():
+            total_price += p.per_total_price
+        return total_price
+
+
+
+
 class ProductOrder(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ', related_name="products_order")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар',)
     quantity = models.IntegerField(verbose_name='Количества товаров')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление')
 
 
     def __str__(self):
-        return f'Товар {self.product.title}, заказа №: {self.order.id}, покупателя {self.order.user.username}'
+        return f'Товар "{self.product.title}" Количество: {self.quantity} , заказа №: {self.order.id}, покупателя {self.order.user.username}'
 
 
     class Meta:

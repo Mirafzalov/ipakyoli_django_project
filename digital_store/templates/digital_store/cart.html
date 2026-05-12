@@ -4,8 +4,11 @@
 {% block main %}
 <div class="cart-page">
 
+    {% if products_cart %}
     <h2 class="cart-title">Ваша корзина</h2>
-
+    {% else %}
+    <h2 class="cart-title" style="padding-left: 400px">Ваша корзина пусто</h2>
+    {% endif %}
     <div class="cart-container">
 
         <!-- LEFT: ITEMS -->
@@ -78,11 +81,13 @@
                 <span style="">Итоговая сумма</span>
                 <strong>{{ cart.total_price|intcomma }} сум</strong>
             </div>
+            {% if products_cart %}
             <a href="{% url 'order' %}">
                 <button class="checkout-btn" style="font-size: 15px">
                     Оформить заказ
                 </button>
             </a>
+            {% endif %}
 
         </div>
 

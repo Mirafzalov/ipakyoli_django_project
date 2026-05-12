@@ -209,17 +209,23 @@ def cart_view(request):
 
 
 def get_page_checkout(request):
+    user = request.user
+    order_class = CartAddDelete(request)
     if request.method == 'POST':
-        order_class = CartAddDelete(request)
         order_class.checkout_view(request)
+        order_class.clear_all(request)
         return redirect('success')
 
-        context = {
-            'user': user,
-        }
+
+    context = {
+        'user': user,
+        'order': order,
+    }
     return render(request, 'digital_store/order.html', context)
 
 
+def success(request):
+    return render(request, 'digital_store/success.html')
 
 
 ####################################################################################################

@@ -1,35 +1,36 @@
 {% extends 'base.html' %}
 
-
 {% block main %}
 <div class="checkout">
 
-    <h2 class="checkout__title">Checkout</h2>
+    <h2 class="checkout__title">Оформление заказа</h2>
 
     <div class="checkout__grid">
 
         <!-- USER -->
         <div class="checkout__card checkout__card--user">
-            <h3 class="checkout__card-title">Ваше данные</h3>
+            <h3 class="checkout__card-title">Ваши данные</h3>
 
             <div class="checkout__info">
-                <p><b>Name:</b>{{  }}</p>
-                <p><b>Phone:</b> +998 90 123 45 67</p>
+                <p><b>Name:</b> {{ user.first_name }} {{ user.last_name }}</p>
+                <p><b>Phone:</b> {{ user.username }}</p>
             </div>
         </div>
 
         <!-- DELIVERY -->
         <div class="checkout__card checkout__card--form">
 
-            <h3 class="checkout__card-title">Дотсавка</h3>
+            <h3 class="checkout__card-title">Доставка</h3>
 
-            <form class="checkout__form">
+            <form id="checkout-form" class="checkout__form" method="post">
+
+                {% csrf_token %}
 
                 <label class="checkout__label">Адрес</label>
-                <input class="checkout__input" type="text">
+                <input class="checkout__input" type="text" name="address">
 
                 <label class="checkout__label">Комментарий</label>
-                <textarea class="checkout__textarea"></textarea>
+                <textarea class="checkout__textarea" name="comment"></textarea>
 
             </form>
 
@@ -42,7 +43,7 @@
 
             <div class="checkout__line">
                 <span>Количество товаров</span>
-                <b>3</b>
+                <b>{{  }}</b>
             </div>
 
             <div class="checkout__line">
@@ -55,7 +56,9 @@
                 <b>19 000 000</b>
             </div>
 
-            <button class="checkout__btn">Place Order</button>
+            <button class="checkout__btn" type="submit" form="checkout-form" style="font-size: 15px">
+                Заказать
+            </button>
 
         </div>
 

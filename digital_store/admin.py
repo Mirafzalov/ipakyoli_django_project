@@ -15,7 +15,6 @@ from .models import *
 # admin.site.register(Characteristic)
 admin.site.register(Order)
 admin.site.register(ProductOrder)
-admin.site.register(Delivery)
 admin.site.register(ProfileUser)
 admin.site.register(Cart)
 admin.site.register(ProductCart)
@@ -31,11 +30,11 @@ class ProductImageInline(admin.TabularInline):
 ############### Image getter
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'brand', 'price', 'quantity', 'discount', 'color_name', 'created_at', 'updated_at')
+    list_display = ('id', 'title', 'brand', 'price', 'quantity', 'discount', 'color_name', 'is_active', 'created_at', 'updated_at')
     list_display_links = ('title',)
     list_filter = ('category', 'brand', 'price')
     search_fields = ['title']
-    list_editable = ('price', 'quantity', 'discount')
+    list_editable = ('price', 'quantity', 'discount', 'is_active')
     prepopulated_fields = {'slug': ('title',)}
     formfield_overrides = {
         models.TextField: {'widget': TinyMCE()},

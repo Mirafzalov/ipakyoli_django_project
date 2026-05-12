@@ -46,10 +46,13 @@
                     </div>
 
                 </div>
-
+                {% if product.quantity > 0 and product.is_active %}
                 <a href="{% url 'add_cart' product.slug 'add' %}">
-                <button class="btn">Добавить в корзину 🛒</button>
+                    <button class="btn">Добавить в корзину 🛒</button>
                 </a>
+                {% elif product.quantity == 0 or product.is_active == False %}
+                <button class="btn" style="background-color: #d3d3d3">Сейчас отсутствует в продаже ❌</button>
+                {% endif %}
             </div>
 
         </div>
