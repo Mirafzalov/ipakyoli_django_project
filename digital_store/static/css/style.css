@@ -1392,14 +1392,14 @@ body {
 }
 
 /* SMALL HOVER EFFECT */
-.checkout__card {
-    transition: 0.2s ease;
+.checkout .card {
+    transform: none !important;
+    margin: 0 !important;
 }
 
-.checkout__card:hover {
-    transform: translateY(-3px);
+.checkout .card:hover {
+    transform: none !important;
 }
-
 
 
 /* Success order */

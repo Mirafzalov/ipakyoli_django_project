@@ -6,7 +6,7 @@ from digital_store.models import Product, ProductCart, Cart, Order, ProductOrder
 class CartAddDelete:
 
     def __init__(self, request):
-        self.user = self.user = request.user
+        self.user = request.user
 
 
     def change_cart(self, slug, action):
@@ -46,12 +46,11 @@ class CartAddDelete:
         }
 
     def checkout_view(self, request):
-        user = request.user
         data = self.cart_view()
         address = request.POST.get('address')
         comment = request.POST.get('comment')
 
-        order = Order.objects.create(user=user, price=data['cart_price'], address=address, comment=comment)
+        order = Order.objects.create(user=self.user, price=data['cart_price'], address=address, comment=comment)
 
         for p_cart in data['products_cart']:
             ProductOrder.objects.create(order=order, product=p_cart.product, quantity=p_cart.quantity)
@@ -65,12 +64,10 @@ class CartAddDelete:
 
             product.save()
 
-        # print(products)
 
         return{
             'order': order,
-            # 'products_order': products_order,
-            'user': user
+            'user': self.user
         }
 
 

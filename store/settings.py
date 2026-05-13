@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'digital_store',
     "rest_framework",
     'api',
+    'telegram_bot',
     'django.contrib.humanize',
     'tinymce',
 
@@ -122,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'Asia/Tashkent'
 

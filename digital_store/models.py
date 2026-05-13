@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.utils.timezone import localtime
 from tinymce.models import HTMLField
 
 
@@ -177,7 +178,7 @@ class Order(models.Model):
     comment = models.TextField(max_length=50, verbose_name='Комментария', blank=True, null=True)
 
     def __str__(self):
-        return f'Заказ Пользователя {self.user.first_name}, Дата Заказа: {self.created_at}'
+        return f'Заказ Пользователя {self.user.first_name}, заказа №: {self.id}, Дата Заказа: {localtime(self.created_at).strftime("%d.%m.%Y %H:%M")}'
 
     class Meta:
         verbose_name = 'Заказ'

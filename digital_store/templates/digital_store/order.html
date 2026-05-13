@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 {% block main %}
 <div class="checkout">
 
@@ -9,7 +9,7 @@
 
         <!-- USER -->
         <div class="checkout__card checkout__card--user">
-            <h3 class="checkout__card-title">Ваши данные</h3>
+            <h3 class="checkout__card-title" style="color: #1e3a8a; font-size: 18px">Ваши данные</h3>
 
             <div class="checkout__info">
                 <p><b>Name:</b> {{ user.first_name }} {{ user.last_name }}</p>
@@ -20,7 +20,7 @@
         <!-- DELIVERY -->
         <div class="checkout__card checkout__card--form">
 
-            <h3 class="checkout__card-title">Доставка</h3>
+            <h3 class="checkout__card-title" style="color: #1e3a8a; font-size: 18px">Доставка</h3>
 
             <form id="checkout-form" class="checkout__form" method="post">
 
@@ -39,21 +39,21 @@
         <!-- SUMMARY -->
         <div class="checkout__card checkout__card--summary">
 
-            <h3 class="checkout__card-title">Итог</h3>
+            <h3 class="checkout__card-title" style="color: #1e3a8a; font-size: 18px">Итог</h3>
 
             <div class="checkout__line">
                 <span>Количество товаров</span>
-                <b>{{  }}</b>
+                <b>{{ cart.total_quantity }}</b>
             </div>
 
-            <div class="checkout__line">
-                <span>Subtotal</span>
-                <b>19 000 000</b>
-            </div>
+<!--            <div class="checkout__line">-->
+<!--                <span>Subtotal</span>-->
+<!--                <b>19 000 000</b>-->
+<!--            </div>-->
 
             <div class="checkout__line checkout__line--total">
                 <span>Итоговая сумма</span>
-                <b>19 000 000</b>
+                <b>{{ cart.total_price|intcomma }} sum</b>
             </div>
 
             <button class="checkout__btn" type="submit" form="checkout-form" style="font-size: 15px">

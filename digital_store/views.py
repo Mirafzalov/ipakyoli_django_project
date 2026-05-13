@@ -211,21 +211,32 @@ def cart_view(request):
 def get_page_checkout(request):
     user = request.user
     order_class = CartAddDelete(request)
+    data = order_class.cart_view()
+    cart = data['cart']
     if request.method == 'POST':
-        order_class.checkout_view(request)
+        data = order_class.checkout_view(request)
+        order = data['order']
         order_class.clear_all(request)
-        return redirect('success')
+        return redirect('success', order_id=order.id)
 
 
     context = {
         'user': user,
-        'order': order,
+        'cart': cart,
     }
     return render(request, 'digital_store/order.html', context)
 
 
-def success(request):
-    return render(request, 'digital_store/success.html')
+def success(request, order_id):
+    # order_class = CartAddDelete(request)
+    # data = order_class.checkout_view(request)
+    # order = data['order']
+    order = get_object_or_404(Order, id=order_id, user=request.user, )
+
+    context = {
+        'order': order,
+    }
+    return render(request, 'digital_store/success.html', context)
 
 
 ####################################################################################################
