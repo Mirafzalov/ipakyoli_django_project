@@ -1,4 +1,6 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from humanize import intcomma
 
 from digital_store.models import Product, ProductCart, Cart, Order, ProductOrder
 
@@ -74,3 +76,48 @@ class CartAddDelete:
     def clear_all(self, request):
         cart = Cart.objects.get(user=request.user)
         cart.productcart_set.all().delete()
+
+
+
+
+# def get_order_history():
+#     # orders = Order.objects.all().order_by('-created_at')[:10]
+#     orders = Order.objects.all().order_by('-created_at')[:10]
+#     text = []
+#     for order in orders:
+#         text.append(f'''
+#         Пользователь: {order.user.first_name}
+#
+#         Номер телефона: {order.user.username}
+#
+#         Номер заказа: #{order.id}
+#
+#         Цена заказа: {intcomma(order.price)}
+#         --------------------------------------------------------------
+#         Заказ создан:  {(order.created_at).strftime("%d.%m.%Y %H:%M")}
+#         ''')
+#
+#     print(f'''
+# #######################
+# {text}
+# ####################''')
+#     print(text)
+#     return text
+
+
+def get_history(request):
+    orders = Order.objects.all()[:10]
+
+    data = []
+
+    for order in orders:
+        data.append({
+            'user': order.user.first_name,
+            'phone': order.user.username,
+            'order_id': order.id,
+            'price': order.price,
+            'created_at': order.created_at
+        })
+    print(data)
+    return JsonResponse(data, safe=False)
+

@@ -5,9 +5,12 @@ from django.contrib.auth.models import User
 # Create your views here.
 from django.views.generic import DetailView, ListView
 from django.contrib import messages
+from humanize import intcomma
+
 from digital_store.forms import *
 from digital_store.models import Product, Category, ProfileUser
 
+from telegram_bot.bot import get_bot
 
 # class MainPage(ListView):
 #     model = Category
@@ -200,7 +203,7 @@ def change_cart_view(request, slug, action):
     return redirect('cart')
 
 # Просмотр корзины
-def cart_view(request):
+def get_cart_view(request):
     cart_class = CartAddDelete(request)
     context = cart_class.cart_view()
 
@@ -216,6 +219,21 @@ def get_page_checkout(request):
     if request.method == 'POST':
         data = order_class.checkout_view(request)
         order = data['order']
+        ################## bot
+        text = f'''
+        Пользователь: {user.first_name}
+        
+        Номер телефона: {user.username}
+        
+        Номер заказа: #{order.id}
+        
+        Количесво товаров: {cart.total_quantity}
+        
+        Цена заказа: {intcomma(order.price)}
+        '''
+        get_bot(text)
+
+        ################## bot
         order_class.clear_all(request)
         return redirect('success', order_id=order.id)
 
@@ -228,15 +246,16 @@ def get_page_checkout(request):
 
 
 def success(request, order_id):
-    # order_class = CartAddDelete(request)
-    # data = order_class.checkout_view(request)
-    # order = data['order']
     order = get_object_or_404(Order, id=order_id, user=request.user, )
-
     context = {
         'order': order,
     }
     return render(request, 'digital_store/success.html', context)
+
+
+
+# Telegram bot
+
 
 
 ####################################################################################################
@@ -281,36 +300,3 @@ def add_category(request):
     return render(request, 'digital_store/add_form.html', {
         'form': form
     })
-
-# # Login and Register
-#
-# def login_view(request):
-#     if request.user.is_authenticated:
-#         return redirect('')
-#
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         user = form
-#         return redirect('main')
-#
-# def logout_view(request):
-#     logout(request)
-#     return redirect('main')
-#
-#
-# def register_view(request):
-#     if request.user.is_authenticated:
-#         return redirect('login')
-#     else:
-#         if request.method == 'POST':
-#             form = RegisterForm(request.POST)
-#             if form.is_valid():
-#                 user = form.save()
-#                 login(request, user)
-#                 return redirect('')
-#         else:
-#             form = RegisterForm()
-#
-#     return render(request, 'digital_store/register.html', {'title': 'Регистрация',  'reg_form': form})
-#
-#
