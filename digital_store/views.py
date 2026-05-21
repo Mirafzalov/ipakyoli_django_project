@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 # Create your views here.
@@ -10,7 +11,6 @@ from humanize import intcomma
 from digital_store.forms import *
 from digital_store.models import Product, Category, ProfileUser
 
-from telegram_bot.bot import get_bot
 
 # class MainPage(ListView):
 #     model = Category
@@ -231,7 +231,7 @@ def get_page_checkout(request):
         
         Цена заказа: {intcomma(order.price)}
         '''
-        get_bot(text)
+        # get_bot(text)
 
         ################## bot
         order_class.clear_all(request)
@@ -255,10 +255,26 @@ def success(request, order_id):
 
 
 # Telegram bot
+# def get_order(page):
+#     orders = Order.objects.all().order_by('-id')
+#     p = []
+#     total_order = []
+#     for order in orders:
+#         p.append(order)
+#         if len(p) == 3:
+#             total_order.append(p)
+#             p = []
+#     if p:
+#         total_order.append(p)
+#
+#     paginator = total_order
+#     page_obj = paginator[page]
+#
+#
+#     return order_page
 
 
-
-####################################################################################################
+########################################################################################################################
 
 
 def get_category(request):

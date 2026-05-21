@@ -104,20 +104,40 @@ class CartAddDelete:
 #     print(text)
 #     return text
 
+# Telegram get history api
+# def get_history(request):
+#     orders = Order.objects.all()[:1]
+#
+#     data = []
+#
+#     for order in orders:
+#         data.append({
+#             'user': order.user.first_name,
+#             'phone': order.user.username,
+#             'order_id': order.id,
+#             'price': order.price,
+#             'created_at': order.created_at
+#         })
+#     print(data)
+#     return JsonResponse(data, safe=False)
+#
+# def get_url():
+#     url = 'http://127.0.0.1:8000/api/orders/'
+#     return url
+#
+#
+# def get_order():
+#     orders = Order.objects.all().order_by('-id')
+#     page = []
+#     order_page = []
+#     for order in orders:
+#         page.append(order)
+#         if len(page) == 3:
+#             order_page.append(page)
+#             page = []
+#     if page:
+#         order_page.append(page)
+#
+#     return order_page
 
-def get_history(request):
-    orders = Order.objects.all()[:10]
-
-    data = []
-
-    for order in orders:
-        data.append({
-            'user': order.user.first_name,
-            'phone': order.user.username,
-            'order_id': order.id,
-            'price': order.price,
-            'created_at': order.created_at
-        })
-    print(data)
-    return JsonResponse(data, safe=False)
 

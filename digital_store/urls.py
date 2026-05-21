@@ -1,5 +1,5 @@
+from .tests import get_order
 from .views import *
-from .utils import get_history
 from django.urls import path
 
 urlpatterns = [
@@ -20,8 +20,7 @@ urlpatterns = [
     # path('cart/delete/<slug:slug>/', cart_product_delete, name='cart_delete'),
 
     # Telegram
-    path('api/orders/', get_history)
-
+    path('api/orders/history/', get_order)
 
     # path('product/<slug:slug>/', ProductDetail.as_view(), name='detail'),
 
