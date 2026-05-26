@@ -1,0 +1,44 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Static files (collected)
+staticfiles/
+static_root/
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Migrations (keep migrations, ignore only pyc inside)
+**/migrations/__pycache__/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
