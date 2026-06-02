@@ -11,6 +11,7 @@ from humanize import intcomma
 from digital_store.forms import *
 from digital_store.models import Product, Category, ProfileUser
 
+from digital_store.utils import CartAddDelete
 
 # class MainPage(ListView):
 #     model = Category
@@ -19,7 +20,7 @@ from digital_store.models import Product, Category, ProfileUser
 #     extra_context = {'title': 'Digital Store МАГАЗИН ТЕХНИКИ'}
 #
 #
-from digital_store.utils import CartAddDelete
+
 
 
 def product_list_view(request):
@@ -30,8 +31,8 @@ def product_list_view(request):
     context = {
         'title': 'Digital Store',
         'products': products,
-        'categories': categories,
-        'brands': brands,
+        # 'categories': categories,
+        # 'brands': brands,
     }
 
     return render(request, 'digital_store/index.html', context)
@@ -316,3 +317,8 @@ def add_category(request):
     return render(request, 'digital_store/add_form.html', {
         'form': form
     })
+
+
+def hello():
+    return render('HELOOOOOOOOOOOOO')
+

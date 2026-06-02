@@ -1,9 +1,5 @@
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from django.test import TestCase
-from rest_framework import request
-from telebot.types import InlineKeyboardButton
-from telegram import InlineKeyboardMarkup
 
 from digital_store.models import Order
 
@@ -13,13 +9,16 @@ def get_order(request):
     orders = Order.objects.all().order_by('-id')
     paginator = Paginator(orders, 3)
     page_obj = paginator.get_page(page)
-
+    products = ''
     data = []
     for order in page_obj:
+        # for p in order.products_order:
+        #     products += {p.title}
         data.append({
             'id': order.id,
             'user': order.user.first_name,
             'phone': order.user.username,
+            # 'products': products,
             'price': order.price,
             'created_at': order.created_at.strftime("%Y-%m-%d %H:%M")
         })

@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  web:
+    build: .
+
+    volumes:
+      - .:/app
+
+    env_file: .env
+
+    ports:
+      - "8000:8000"
+
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+    depends_on:
+      - postgres
+
+
+  bot:
+    build:
+      context: ./telegram_bot
+
+
+    env_file: .env
+
+    command: watchfiles "python bot.py"
+
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+
+volumes:
+  postgres_data:
