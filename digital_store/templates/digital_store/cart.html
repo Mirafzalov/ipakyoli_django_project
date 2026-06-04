@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block main %}
+<div class="cart-page">
+
+    {% if products_cart %}
+    <h2 class="cart-title">Ваша корзина</h2>
+    {% else %}
+    <h2 class="cart-title" style="padding-left: 400px">Ваша корзина пусто</h2>
+    {% endif %}
+    <div class="cart-container">
+
+        <!-- LEFT: ITEMS -->
+        <div class="cart-items">
+
+            {% for product_cart in products_cart %}
+            <!-- ITEM -->
+            <div class="cart-item">
+
+                <img src="{{ product_cart.product.images.first.image.url }}" class="cart-img">
+
+                <div class="cart-info">
+                    <h4>{{ product_cart.product.title }}</h4>
+                    {% if product_cart.product.discount %}
+
+                    <span class="new-price">{{ product_cart.product.discount_price|intcomma }} сум</span>
+                    <span class="old-price">{{ product_cart.product.price|intcomma }} сум</span>
+
+                    <div class="discount-badge">
+                        -{{ product_cart.product.discount }}%
+                    </div>
+                    {% else %}
+                    <span class="new-price">{{ product_cart.product.price|intcomma }} сум</span>
+
+                    {% endif %}
+
+
+                </div>
+
+                <div class="cart-qty">
+                    <a href="{% url 'change_cart' product_cart.product.slug 'delete' %}">
+                        <button>-</button>
+                    </a>
+                    <span>{{ product_cart.quantity }}</span>
+                    <a href="{% url 'change_cart' product_cart.product.slug 'add' %}">
+                        <button>+</button>
+                    </a>
+                </div>
+
+                <div class="cart-total">
+                    {% if product_cart.product.discount %}
+
+                    {{ product_cart.per_total_price|intcomma }}
+
+                    {% else %}
+
+                    {{ product_cart.per_total_price|intcomma }}
+
+                    {% endif %}
+                </div>
+                <a href="{% url 'change_cart' product_cart.product.slug 'clear' %}">
+                    <button class="remove-btn">✕</button>
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- RIGHT: SUMMARY -->
+        <div class="cart-summary">
+
+            <h3 style="padding-bottom: 20px; color: #1e3a8a; font-size: 23px;">Итог заказа</h3>
+
+            <div class="summary-row">
+                <span>Количество товаров</span>
+                <strong>{{ cart.total_quantity }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span style="">Итоговая сумма</span>
+                <strong>{{ cart.total_price|intcomma }} сум</strong>
+            </div>
+            {% if products_cart %}
+            <a href="{% url 'order' %}">
+                <button class="checkout-btn" style="font-size: 15px">
+                    Оформить заказ
+                </button>
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock main %}

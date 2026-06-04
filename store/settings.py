@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +42,16 @@ INSTALLED_APPS = [
     'digital_store',
     "rest_framework",
     'api',
-    'humanize'
+    'telegram_bot',
+    'django.contrib.humanize',
+    'tinymce',
+
 ]
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "slate",
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
 ROOT_URLCONF = 'store.urls'
@@ -113,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'Asia/Tashkent'
 
@@ -128,11 +138,13 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD ="django.db.models.BigAutoField"
 
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'digital_store/static'
+    BASE_DIR / 'digital_store' / 'static'
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+

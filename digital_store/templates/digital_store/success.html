@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+
+{% block main %}
+
+<div class="success-page">
+
+    <div class="success-card">
+
+        <!-- ICON -->
+        <div class="icon">✓</div>
+
+        <h1>Заказ создан!</h1>
+
+        <p>Ваши оплата была принята.</p>
+
+        <div class="info">
+
+            <div class="info-row">
+                <span>Номер заказа</span>
+                <b>#{{ order.id }}</b>
+            </div>
+
+            <div class="info-row">
+                <span>Статус</span>
+                <b class="status">Оплачено</b>
+            </div>
+
+            <div class="info-row">
+                <span>Доставка</span>
+                <b>В ожидании</b>
+            </div>
+
+        </div>
+
+        <div class="buttons">
+
+
+            <a href="" class="primary">Посмотреть историю заказов</a>
+
+            <a href="{% url 'home' %}" class="secondary">Продолжить покупку</a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock main %}

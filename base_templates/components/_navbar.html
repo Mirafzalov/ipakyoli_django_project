@@ -1,0 +1,131 @@
+{% load humanize %}
+{% load digital_store_tags %}
+{% get_categories as categories %}
+{% get_brands as brands%}
+
+<div class="navbar">
+
+    <!-- LEFT -->
+    <div class="nav-left">
+
+        <button class="filter-btn" onclick="openFilters()">
+            ☰
+        </button>
+        <a href="{% url 'home' %}">
+            <h2 class="logo" style="font-size: 22px">MyStore</h2>
+        </a>
+
+    </div>
+
+    <!-- CENTER -->
+    <div class="nav-center">
+        <input type="text" placeholder="Search products...">
+    </div>
+
+    <!-- RIGHT -->
+    <div class="nav-right">
+
+        <a href="#">
+            <i class="fa-solid fa-heart" style="color: red; font-size: 20px"></i>
+        </a>
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}">
+            <i class="fa-solid fa-user" style="color: white; font-size: 20px"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}">
+            <i class="fa-solid fa-user" style="color: white; font-size: 20px"></i>
+        </a>
+        {% endif %}
+
+
+        <a href="{% url 'cart' %}">
+            <i class="fa-solid fa-cart-shopping" style="color: white; font-size: 20px"></i>
+
+        </a>
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'settings' %}">
+            <i class="fa-solid fa-gear" style="color: white; font-size: 20px"></i>
+        </a>
+         {% else %}
+        <a href="{% url 'login' %}">
+           <i class="fa-solid fa-gear" style="color: white; font-size: 20px"></i>
+        </a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}">
+            Logout
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}">Login
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </a>
+        {% endif %}
+    </div>
+
+</div>
+
+
+<!-- FILTER PANEL -->
+
+<div class="filter-panel" id="filterPanel">
+
+    <div class="filter-header">
+        <h3>Филтрация</h3>
+        <button onclick="closeFilters()">✕</button>
+    </div>
+
+    <div class="filter-body">
+
+        <form method="GET" action="{% url 'filter_products' %}">
+            <label>Категория</label>
+            <select name="category">
+                <option value="">Все</option>
+                {% for category in categories %}
+                <option value="{{ category.slug }}">
+                    {{ category.title }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label>Бренд</label>
+            <select name="brand">
+                <option value="">Все</option>
+                {% for brand in brands %}
+                <option value="{{ brand.slug }}">{{ brand.title }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Цена</label>
+
+            <input type="range" min="500000" max="100000000" value="100000000" id="priceRange" name="price">
+
+            <span id="priceValue"></span>
+            <button type="submit" class="apply-btn">Применить</button>
+
+
+            <script>
+const priceRange = document.getElementById("priceRange");
+const priceValue = document.getElementById("priceValue");
+
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+priceRange.addEventListener("input", function () {
+    priceValue.textContent = formatNumber(this.value) + " сум";
+});
+
+
+
+            </script>
+
+        </form>
+    </div>
+
+</div>
+

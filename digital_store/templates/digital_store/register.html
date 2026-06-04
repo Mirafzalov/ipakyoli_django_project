@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="auth-page">
+
+    <div class="auth-left">
+        <h1>Присоединяйтесь</h1>
+        <p>Создайте свой аккаунт и начните покупку</p>
+    </div>
+
+    <div class="auth-right">
+
+        <div class="auth-card">
+
+            <h2>Регистрация</h2>
+
+            {% for message in messages %}
+            <p style="color: red; padding-bottom: 8px">{{ message }}</p>
+            {% endfor %}
+            <form method="POST">
+                {% csrf_token %}
+
+                <class style="color: red; font-size: 15px; padding-bottom: 8px">{{ form.phone.errors }}</class>
+
+                <input type="text" name="phone" placeholder="Телефон номер">
+                <input type="text" name="first_name" placeholder="Имя">
+                <input type="text" name="last_name" placeholder="Фамилия">
+                <input type="email" name="email" placeholder="Ваша почта">
+                <input type="password" name="password1" placeholder="Пароль" autocomplete="new-password">
+                <input type="password" name="password2" placeholder="Подтвердить пароль" autocomplete="new-password">
+
+
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+
+            <p>
+                Уже есть аккаунт?
+                <a href="{% url 'login' %}">Войти</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock main %}
+

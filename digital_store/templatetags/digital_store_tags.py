@@ -1,5 +1,5 @@
 from django import template
-from digital_store.models import Category
+from digital_store.models import Category, Brand
 
 register = template.Library()
 
@@ -7,6 +7,12 @@ register = template.Library()
 def get_categories():
     categories = Category.objects.all()
     return categories
+
+
+@register.simple_tag()
+def get_brands():
+    brands = Brand.objects.all()
+    return brands
 
 @register.simple_tag(takes_context=True)
 def query_params(context, **kwargs):

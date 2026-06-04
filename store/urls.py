@@ -24,11 +24,9 @@ urlpatterns = [
     path('', include('digital_store.urls')),
     path('', include("api.urls")),
     path("api-auth/", include("rest_framework.urls")),
-
-
+    path('tinymce/', include('tinymce.urls')),
 
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

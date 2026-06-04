@@ -1,50 +1,132 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load humanize %}
 
 
-{% block header %}
-
-{% endblock header %}
-
-
 {% block main %}
-<div class="content">
-    <div class="container">
-        {% include 'digital_store/components/_product_parameters.html' %}
-
-        {% include 'digital_store/components/_product_characteristics.html' %}
 
 
-        <div class="same_products">
-            <div class="content">
-                <div class="container">
-                    <div class="same_product_text">
-                        <h2 class="content__title">Похожие товары</h2>
-                        <a href="{{ product.category.get_absolute_url }}" class="content__title"><span>Больше Товаров</span> <img
-                                src="{% static 'image/icons/errow_right.svg' %}"
-                                alt=""></a>
+<div class="detail_product">
+
+    <div class="product_img">
+        <swiper-container class="mySwiper" loop="true" navigation="true">
+
+            {% for img in product.images.all %}
+            <swiper-slide>
+                <img src="{{ img.image.url }}" class="product_image">
+            </swiper-slide>
+            {% endfor %}
+
+        </swiper-container>
+    </div>
+
+    <div class="product_info">
+
+        <div class="heart_card" onclick="toggleHeart(this)">❤</div>
+
+
+        <h2 class="title_product">{{ product.title }}</h2>
+
+        <div class="product_top_row">
+
+            <!-- PRICE -->
+            <div class="price_block">
+
+                <p>Цена:</p>
+
+                {% if product.discount %}
+                <h3>{{ product.discount_price|intcomma }} sum</h3>
+                <span class="old_price">
+                {{ product.price|intcomma }} sum</span>
+                {% else %}
+                 <h3>{{ product.price|intcomma }} sum</h3>
+                {% endif %}
+
+            </div>
+
+            <!-- COLOR -->
+            <div class="color_product">
+                <p>Цвет:</p>
+                <div class="color_box">
+                    <div class="color_item" style="background: {{ product.color_code }}"></div>
+                </div>
+            </div>
+
+            <!-- QUANTITY -->
+            <div class="quantity_product">
+                <p>Количество:</p>
+                <h3>{{ product.quantity }}</h3>
+            </div>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="buttons">
+            <a class="btn cart_btn">Добавить в корзину 🛒</a>
+            <a class="btn installment_btn">Купить в рассрочку</a>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="product_description" style="white-space: normal;
+    line-height: 1.6;
+    font-size: 16px;">
+    <h3>Описание товара</h3>
+    <p>{{ product.description|linebreaks }}</p>
+</div>
+
+<div class="product_detail_info">
+    <h3>Характеристки товара</h3>
+
+    {{ product.characteristic|safe }}
+</div>
+
+<div class="container similar_products">
+    <div class="product-grid">
+
+        {% for product in products %}
+        <div class="card">
+
+            <div class="heart_card" onclick="toggleHeart(this)">❤</div>
+
+            <a href="{% url 'product_detail' product.slug product.id %}">
+                <div class="card-img">
+                    <img src="{{ product.images.first.image.url }}">
+                </div>
+            </a>
+
+            <div class="card-body">
+
+                <h4>{{ product.title }}</h4>
+
+                <div class="price-block">
+
+                    {% if product.discount %}
+
+                    <span class="new-price">{{ product.discount_price|intcomma }} сум</span>
+                    <span class="old-price">{{ product.price|intcomma }} сум</span>
+
+                    <div class="discount-badge">
+                        -{{ product.discount }}%
                     </div>
-                    <div class="content__cards">
+                    {% else %}
+                    <span class="new-price">{{ product.price|intcomma }} сум</span>
 
-                        {% for product in same_products.all|slice:":3" %}
-
-                        {% include 'digital_store/components/_card.html' %}
-
-                        {% endfor %}
-
-
+                    {% endif %}
+                    <div class="installment-text">
+                        ~ Рассрочка от {{ product.installment_price|intcomma }} сум / на 12 мес
                     </div>
-
 
                 </div>
 
+                <button class="btn">Добавить в корзину 🛒</button>
 
             </div>
+
         </div>
+        {% endfor %}
 
     </div>
 </div>
 {% endblock main %}
-
-

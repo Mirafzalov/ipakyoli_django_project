@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block main %}
+
+<div class="container">
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+
+        <div class="card">
+
+            <div class="heart_card" onclick="toggleHeart(this)">❤</div>
+
+            <a href="{% url 'product_detail' product.slug product.id %}">
+                <div class="card-img">
+                    <img src="{{ product.images.first.image.url }}">
+                </div>
+            </a>
+
+            <div class="card-body">
+
+                <h4>{{ product.title }}</h4>
+
+                <div class="price-block">
+
+                    {% if product.discount %}
+
+                    <span class="new-price">{{ product.discount_price|intcomma }} сум</span>
+                    <span class="old-price">{{ product.price|intcomma }} сум</span>
+
+                    <div class="discount-badge">
+                        -{{ product.discount }}%
+                    </div>
+                    {% else %}
+                    <span class="new-price">{{ product.price|intcomma }} сум</span>
+
+                    {% endif %}
+                    <div class="installment-text">
+                        ~ Рассрочка от {{ product.installment_price|intcomma }} сум / на 12 мес
+                    </div>
+
+                </div>
+
+                <button class="btn">Добавить в корзину 🛒</button>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-products">
+        <h2>Нет товаров 😕</h2>
+        <p>Выберите другую категорию.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock main %}
+
