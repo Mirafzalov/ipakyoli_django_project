@@ -12,18 +12,22 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+
+
   web:
     build: .
 
     volumes:
       - .:/app
 
+
     env_file: .env
 
     ports:
-      - "8000:8000"
+        - "8000:8000"
 
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate && exec python manage.py runserver 0.0.0.0:8000"
 
     depends_on:
       - postgres
@@ -33,6 +37,8 @@ services:
     build:
       context: ./telegram_bot
 
+    volumes:
+      - ./telegram_bot:/app
 
     env_file: .env
 
@@ -40,6 +46,7 @@ services:
 
     depends_on:
       - postgres
+
     restart: unless-stopped
 
 

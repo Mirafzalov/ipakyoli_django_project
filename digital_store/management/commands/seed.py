@@ -17,46 +17,48 @@ class Command(BaseCommand):
 
 
     def user_seeder(self):
-        users = [
-            (20, 'admin2', 'admin212345678', 'Muhammad', 'Mirafzalov', True),
-            (21, '+998992222222', 'ziyod12345678', 'Ziyod', 'Avazov', False)
-        ]
 
-        for id, username, password, first_name, last_name, is_superuser in users:
+        if not User.objects.filter(username='admin2').exists():
+            user = User.objects.create_superuser(username='admin2',
+            password='admin212345678',# Better put password in .env file to keep it private
+            first_name='Muhammad',
+            last_name='Mirafzalov')
 
-            user = User.objects.create(
-                id=id, username=username, first_name=first_name,
-                last_name=last_name, is_superuser=is_superuser,
-                is_staff=is_superuser
-            )
-            user.set_password(password)
+
+        user, created = User.objects.get_or_create(username='+998992222222',
+                                   defaults=dict(
+                                       first_name='Ziyod',
+                                       last_name='Avazov')
+                                          )
+        if created:
+            user.set_password('ziyod12345678')
             user.save()
+
+
 
         self.stdout.write(self.style.SUCCESS("Seeding Users completed!"))
 
 
     def category_seeder(self):
         categories = [
-            (45, 'Кофемашины', 'kofemashiny'),
-            (46, 'Смарт-часы', 'smart-chasy')
+            ('Кофемашины', 'kofemashiny'),
+            ('Смарт-часы', 'smart-chasy')
         ]
 
-        for id, title, slug in categories:
-
-            Category.objects.create(id=id, title=title, slug=slug)
+        for title, slug in categories:
+            Category.objects.get_or_create(title=title, slug=slug)
 
         self.stdout.write(self.style.SUCCESS('Seeding Categories completed'))
 
 
     def brand_seeder(self):
         brands = [
-            (20, "De'Longhi", 'delonghi'),
-            (21, 'HUAWEI', 'huawei')
+            ("De'Longhi", 'delonghi'),
+            ('HUAWEI', 'huawei')
         ]
 
-        for id, title, slug in brands:
-            Brand.objects.create(
-                id=id,
+        for title, slug in brands:
+            Brand.objects.get_or_create(
                 title=title,
                 slug=slug
             )
@@ -65,34 +67,69 @@ class Command(BaseCommand):
 
 
     def product_seeder(self):
-        products = [
-            (20, "Кофемашина De'Longhi ECAM380.95.TB",
-             'kofemashina-delonghi-ecam380-95-tb', 30,
-             12885500, 0, 'Серебристый', '#C0C0C0', 20, 45),
 
-            (21, "Смарт-часы HUAWEI-Watch FIT 3 Черный",
-             'smart-chasy-huawei-watch-fit-3-chernyy', 60,
-             1617300, 0, 'Чёрный', '#000000', 21, 46)
+        kofemashiny_id = Category.objects.get(title="Кофемашины").id
+        smart_chasy_id = Category.objects.get(title="Смарт-часы").id
+
+        delonghi_id = Brand.objects.get(title="De'Longhi").id
+        huawei_id = Brand.objects.get(title="HUAWEI").id
+
+        products = [
+        {
+            'title': "Кофемашина De'Longhi ECAM380.95.TB",
+            'slug': 'kofemashina-delonghi-ecam380-95-tb',
+            'quantity': 30,
+            'price': 12885500,
+            'discount': 0,
+            'color_name': 'Серебристый',
+            'color_code': '#C0C0C0',
+            'category_id': kofemashiny_id,
+            'brand_id': delonghi_id
+            },
+        {
+            'title': "Смарт-часы HUAWEI-Watch FIT 3 Черный",
+             'slug': 'smart-chasy-huawei-watch-fit-3-chernyy',
+            'quantity': 60,
+             'price': 1617300,
+            'discount': 0,
+            'color_name': 'Чёрный',
+            'color_code': '#000000',
+            'category_id': smart_chasy_id,
+            'brand_id': huawei_id
+             }
         ]
 
-        for id, title, slug, quantity, price, discount, color_name, color_code, brand_id, category_id in products:
-
-            Product.objects.create(
-                id=id, title=title, slug=slug, quantity=quantity, price=price,
-                discount=discount, color_name=color_name, color_code=color_code,
-                brand_id=brand_id, category_id=category_id)
+        for data in products:
+            title = data.pop('title')
+            Product.objects.get_or_create(
+                title=title,
+                defaults=data
+            )
 
         self.stdout.write(self.style.SUCCESS('Seeding Products completed'))
 
-
     def order_seeder(self):
-        orders = [(100, 20, 14502800),
-                  (101, 21, 12885500),
-                  (102, 20, 1617300)]
+        super_user = User.objects.get(username='admin2')
+        user = User.objects.get(username='+998992222222')
 
-        for id, user_id, price in orders:
-            user = User.objects.get(id=user_id)
+        coffee_machine = Product.objects.get(
+            title="Кофемашина De'Longhi ECAM380.95.TB"
+        )
 
-            Order.objects.create(id=id, user_id=user.id, price=price)
+        smartwatch = Product.objects.get(
+            title='Смарт-часы HUAWEI-Watch FIT 3 Черный'
+        )
 
-        self.stdout.write(self.style.SUCCESS("Seeding Orders completed"))
+        orders = [
+            (super_user.id, coffee_machine.price + smartwatch.price),
+            (super_user.id, coffee_machine.price),
+            (user.id, smartwatch.price),
+        ]
+
+        for user_id, price in orders:
+            Order.objects.create(user_id=user_id, price=price)
+
+
+        self.stdout.write(
+            self.style.SUCCESS("Seeding Orders completed")
+        )

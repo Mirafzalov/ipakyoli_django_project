@@ -40,8 +40,8 @@ def get_order_api(page):
         'http://web:8000/api/orders/history/',
         params={'page': page}
     )
-
     return response.json()
+
 
 
 def get_buttons(data):
@@ -109,24 +109,6 @@ def paginate_buttons(call):
             '''
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=markup)
 
-
-# @bot.message_handler(commands=['history'])
-# def send_history(message):
-#     response = requests.get(get_url())
-#     orders = response.json()
-#     for order in orders:
-#         text = f'''
-#         Пользователь: {order['user']}
-#
-#         Номер телефона: {order['phone']}
-#
-#         Номер заказа: #{order['order_id']}
-#
-#         Цена заказа: {intcomma(order['price'])}
-#         --------------------------------------------------------------
-#         Заказ создан: {order['created_at']}
-#         '''
-#         bot.send_message(message.chat.id, text, reply_markup=markup)
 
 
 @bot.message_handler(commands=['help'])
