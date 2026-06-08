@@ -18,8 +18,6 @@ from digital_store.utils import CartAddDelete
 #     context_object_name = 'categories'
 #     template_name = 'digital_store/index.html'
 #     extra_context = {'title': 'Digital Store МАГАЗИН ТЕХНИКИ'}
-#
-#
 
 
 
