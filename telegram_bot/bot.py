@@ -12,10 +12,7 @@ from telebot import TeleBot
 
 import requests
 from humanize import intcomma
-from telebot.types import InlineKeyboardMarkup
-from telegram import InlineKeyboardButton
-
-# from digital_store.utils import get_url
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 load_dotenv()
 BOT_TOKEN = os.getenv('TOKEN')
@@ -40,10 +37,11 @@ def start(message):
 
 def get_order_api(page):
     response = requests.get(
-        'http://127.0.0.1:8000/api/orders/history/',
+        'http://web:8000/api/orders/history/',
         params={'page': page}
     )
     return response.json()
+
 
 
 def get_buttons(data):
@@ -112,23 +110,11 @@ def paginate_buttons(call):
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=markup)
 
 
-# @bot.message_handler(commands=['history'])
-# def send_history(message):
-#     response = requests.get(get_url())
-#     orders = response.json()
-#     for order in orders:
-#         text = f'''
-#         Пользователь: {order['user']}
-#
-#         Номер телефона: {order['phone']}
-#
-#         Номер заказа: #{order['order_id']}
-#
-#         Цена заказа: {intcomma(order['price'])}
-#         --------------------------------------------------------------
-#         Заказ создан: {order['created_at']}
-#         '''
-#         bot.send_message(message.chat.id, text, reply_markup=markup)
+
+@bot.message_handler(commands=['help'])
+def help(message):
+    bot.send_message(message.chat.id, 'Пока что это функция не доступна')
+
 
 bot.polling()
 
