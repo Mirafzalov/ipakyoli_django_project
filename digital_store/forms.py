@@ -5,26 +5,14 @@ from digital_store.models import *
 
 
 
-class CategoryForm(forms.ModelForm):
-    class Meta:
-        model = Category
-        fields = ('title', 'icon')
-
-
-class BrandForm(forms.ModelForm):
-    class Meta:
-        fields = ('title', )
-
-
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = ('title', 'quantity', 'price', 'color_name', 'discount', 'category', 'brand')
-
-
-
 
 class RegisterForm(UserCreationForm):
+    
+    Choices = [
+    ('buyer', 'Buyer'),
+    ('seller', 'Seller')
+]
+    
     first_name = forms.CharField(label=False, widget=forms.TextInput())
 
     last_name = forms.CharField(label=False, widget=forms.TextInput())
@@ -37,9 +25,11 @@ class RegisterForm(UserCreationForm):
 
     phone = forms.CharField(label=False, widget=forms.TextInput())
 
+    role = forms.ChoiceField(choices=Choices)
+
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2', 'role')
 
 
 class LoginForm(AuthenticationForm):
@@ -49,17 +39,23 @@ class LoginForm(AuthenticationForm):
 
 
 
-# For editing the personal info in Profilex
-# class EditAccountForm(forms.ModelForm):
-#     phone = forms.CharField(label=False, widget=forms.TextInput())
-#
-#     password1 = forms.CharField(label=False, widget=forms.PasswordInput())
-#
-#     password2 = forms.CharField(label=False, widget=forms.PasswordInput())
-#
+
+
+#DRF
+
+# class CategoryForm(forms.ModelForm):
 #     class Meta:
-#         model = User
-#         fields = ('password1', 'password2')
-#
-#
-# 3
+#         model = Category
+#         fields = ('title', 'icon')
+
+
+# class BrandForm(forms.ModelForm):
+#     class Meta:
+#         fields = ('title', )
+
+
+# class ProductForm(forms.ModelForm):
+#     class Meta:
+#         model = Product
+#         fields = ('title', 'quantity', 'price', 'color_name', 'discount', 'category', 'brand')
+

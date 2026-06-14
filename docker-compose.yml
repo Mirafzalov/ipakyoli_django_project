@@ -4,6 +4,7 @@ services:
 
   postgres:
     image: postgres:16-alpine 
+    container_name: db
 
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -17,6 +18,7 @@ services:
 
   web:
     build: .
+    container_name: web
 
     volumes:
       - .:/app
@@ -36,6 +38,8 @@ services:
   bot:
     build:
       context: ./telegram_bot
+    
+    container_name: bot
 
     volumes:
       - ./telegram_bot:/app

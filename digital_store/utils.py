@@ -7,15 +7,20 @@ from digital_store.models import Product, ProductCart, Cart, Order, ProductOrder
 
 class CartAddDelete:
 
+
     def __init__(self, request):
         self.user = request.user
+
+        if hasattr(self.user, 'buyer_profile'):
+            self.buyer = request.user.buyer_profile            
 
 
     def change_cart(self, slug, action):
 
         product = Product.objects.get(slug=slug)
 
-        cart, created = Cart.objects.get_or_create(user=self.user)
+        cart, created = Cart.objects.get_or_create(buyer=self.buyer)
+        print('It worked')
 
         product_cart, product_created = ProductCart.objects.get_or_create(cart=cart, product=product)
 
@@ -35,7 +40,7 @@ class CartAddDelete:
 
     # Просмотр корзины
     def cart_view(self):
-        cart = get_object_or_404(Cart, user=self.user)
+        cart = get_object_or_404(Cart, buyer=self.buyer)
         products_cart = cart.productcart_set.all()
         cart_price = cart.total_price
 
@@ -52,7 +57,7 @@ class CartAddDelete:
         address = request.POST.get('address')
         comment = request.POST.get('comment')
 
-        order = Order.objects.create(user=self.user, price=data['cart_price'], address=address, comment=comment)
+        order = Order.objects.create(buyer=self.buyer, price=data['cart_price'], address=address, comment=comment)
 
         for p_cart in data['products_cart']:
             ProductOrder.objects.create(order=order, product=p_cart.product, quantity=p_cart.quantity)
@@ -69,75 +74,11 @@ class CartAddDelete:
 
         return{
             'order': order,
-            'user': self.user
+            'buyer': self.buyer
         }
 
 
     def clear_all(self, request):
-        cart = Cart.objects.get(user=request.user)
+        cart = Cart.objects.get(buyer=self.buyer)
         cart.productcart_set.all().delete()
-
-
-
-
-# def get_order_history():
-#     # orders = Order.objects.all().order_by('-created_at')[:10]
-#     orders = Order.objects.all().order_by('-created_at')[:10]
-#     text = []
-#     for order in orders:
-#         text.append(f'''
-#         Пользователь: {order.user.first_name}
-#
-#         Номер телефона: {order.user.username}
-#
-#         Номер заказа: #{order.id}
-#
-#         Цена заказа: {intcomma(order.price)}
-#         --------------------------------------------------------------
-#         Заказ создан:  {(order.created_at).strftime("%d.%m.%Y %H:%M")}
-#         ''')
-#
-#     print(f'''
-# #######################
-# {text}
-# ####################''')
-#     print(text)
-#     return text
-
-# Telegram get history api
-# def get_history(request):
-#     orders = Order.objects.all()[:1]
-#
-#     data = []
-#
-#     for order in orders:
-#         data.append({
-#             'user': order.user.first_name,
-#             'phone': order.user.username,
-#             'order_id': order.id,
-#             'price': order.price,
-#             'created_at': order.created_at
-#         })
-#     print(data)
-#     return JsonResponse(data, safe=False)
-#
-# def get_url():
-#     url = 'http://127.0.0.1:8000/api/orders/'
-#     return url
-#
-#
-# def get_order():
-#     orders = Order.objects.all().order_by('-id')
-#     page = []
-#     order_page = []
-#     for order in orders:
-#         page.append(order)
-#         if len(page) == 3:
-#             order_page.append(page)
-#             page = []
-#     if page:
-#         order_page.append(page)
-#
-#     return order_page
-
 

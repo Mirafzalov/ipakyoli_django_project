@@ -39,21 +39,77 @@ class Brand(models.Model):
         verbose_name_plural = 'Бренды'
 
 
+
+# Профили
+
+
+class BuyerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='buyer_profile', verbose_name='Пользователь')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+
+    
+    def __str__(self):
+        return f'Покупатель: {self.user.first_name} {self.user.last_name}, {self.user.username}' 
+
+    class Meta:
+        verbose_name = 'Профиль покупателя'
+        verbose_name_plural = 'Профили покупателей'
+
+
+class SellerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='seller_profile', verbose_name='Пользователь')
+    store_name = models.CharField(max_length=150, verbose_name='Название магазина')
+    logo = models.ImageField(upload_to='sellers/logos/', verbose_name='Логотип магазина', blank=True)
+    banner = models.ImageField(upload_to='sellers/banners/', verbose_name='Баннер магазина', blank=True)
+    description = models.TextField(max_length=500, verbose_name='Описание магазина', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+
+    @property
+    def get_logo(self):
+            if self.logo:
+                return self.logo.url
+            else:
+                return '-'
+
+    @property
+    def get_banner(self):
+        if self.banner:
+            return self.banner.url
+        else:
+            return '-'
+
+    # def products.
+
+
+    def __str__(self):
+        return f'Магазин: {self.store_name},  Продавец: {self.user.first_name}'
+
+    class Meta:
+        verbose_name = 'Профиль продавца'
+        verbose_name_plural = 'Профили продавцов'
+
+
+
+
+
 class Product(models.Model):
     title = models.CharField(max_length=200, verbose_name='Название товара')
     slug = models.SlugField(unique=True, verbose_name='Слаг товара', null=True, blank=True)
     description = models.TextField(max_length=1000, verbose_name='Описание товара', blank=True, null=True)
     quantity = models.IntegerField(default=10, verbose_name='Количества товара')
     price = models.IntegerField(default=1000000, verbose_name='Цена товара')
+    discount = models.IntegerField(default=0, verbose_name='Скидка на товар')
     color_name = models.CharField(max_length=50, default='Белый', verbose_name='Название цвета')
     color_code = models.CharField(max_length=50, default='#ffffff', verbose_name='Код цвета')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление', null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменение', null=True, blank=True)
-    discount = models.IntegerField(default=0, verbose_name='Скидка на товар')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория', related_name='products')
-    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Бренд', related_name='brand')
     is_active = models.BooleanField(default=True, verbose_name='Доступно на складе')
     characteristic = HTMLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавление', null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата изменение', null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория', related_name='products')
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Бренд', related_name='brand')
+    seller = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Продавец', related_name='seller_products')
 
 
     def discount_price(self):
@@ -79,7 +135,7 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/', blank=True)
 
     def __str__(self):
-        return self.title
+        return f' Фото товара {self.product.title}'
 
     class Meta:
         verbose_name = 'Фото товара'
@@ -87,35 +143,13 @@ class ProductImage(models.Model):
 
 
 
-class ProfileUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='profile/', verbose_name='Фото профиля', blank=True)
-    created_at = models.DateTimeField(auto_now_add=True,  verbose_name='Дата добавление')
-
-
-    def get_image(self):
-        if self.image:
-            return self.image.url
-        else:
-            return 'https://i.pinimg.com/originals/5f/91/41/5f91413c8a9e766a5139c6cfe5caa837.jpg'
-
-
-
-
-    def __str__(self):
-        return self.user.first_name
-
-    class Meta:
-        verbose_name = 'Профиль пользователя'
-        verbose_name_plural = 'Профили пользователей'
-
 
 
 # Корзина
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    buyer = models.OneToOneField(BuyerProfile, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Пользователь')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создание')
 
     @property
@@ -134,7 +168,12 @@ class Cart(models.Model):
 
 
     def __str__(self):
-        return f'Корзина покупателя № {self.user}'
+        if self.buyer and self.buyer.user:
+            name = self.buyer.user.first_name
+        else:
+            name = "Unknown"
+        return f'Корзина покупателя {name} № {self.id}  '
+
 
     class Meta:
         verbose_name = 'Корзина'
@@ -159,7 +198,11 @@ class ProductCart(models.Model):
 
 
     def __str__(self):
-        return f'Товар:{self.product.title}, Количество:{self.quantity}'
+        if self.cart.buyer.user:
+            return f'Товар:{self.product.title}, Количество:{self.quantity}, Покупатель: {self.cart.buyer.user}'
+        else:
+            return f'{self.id}: Unknown'
+
 
     class Meta:
         verbose_name = 'Товар в корзине '
@@ -168,18 +211,23 @@ class ProductCart(models.Model):
 
 # Заказы
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель')
+    buyer = models.ForeignKey(BuyerProfile, on_delete=models.CASCADE, null=True, blank=True,verbose_name='Покупатель')
     price = models.IntegerField(verbose_name='Цена заказа')
     status = models.CharField(max_length=30, default='Pending')
+    address = models.CharField(max_length=100, verbose_name='Адрес', blank=True)
+    comment = models.TextField(max_length=50, verbose_name='Комментария', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата заказа')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата оплаты заказа')
 
-    address = models.CharField(max_length=100, verbose_name='Адрес', blank=True)
-    comment = models.TextField(max_length=50, verbose_name='Комментария', blank=True, null=True)
+
 
     def __str__(self):
-        return f'Заказ Пользователя {self.user.first_name}, заказа №: {self.id}, Дата Заказа: {localtime(self.created_at).strftime("%d.%m.%Y %H:%M")}'
+        if self.buyer and self.buyer.user:
+            name = self.buyer.user.first_name
+        else:
+            name = "Unknown"
 
+        return f"Order #{self.id} - {name}"
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
@@ -211,7 +259,15 @@ class ProductOrder(models.Model):
 
 
     def __str__(self):
-        return f'Товар "{self.product.title}" Количество: {self.quantity} , заказа №: {self.order.id}, покупателя {self.order.user.username}'
+        if self.order and self.order.buyer and self.order.buyer.user.first_name:
+            return (
+            f'Товар "{self.product.title}" '
+            f'Количество: {self.quantity}, '
+            f'заказ №: {self.order.id}, '
+            f'покупатель {self.order.buyer.user.first_name}'
+    )
+        else:
+            return 'Unknown'
 
 
     class Meta:

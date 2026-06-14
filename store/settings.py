@@ -108,12 +108,6 @@ DATABASES = {
         'PORT': config('DB_PORT'),
     }
 }
-from decouple import config
-
-print(config('DB_NAME'))
-print(config('DB_USER'))
-print(config('DB_PASSWORD'))
-print(config('DB_PORT'))
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
