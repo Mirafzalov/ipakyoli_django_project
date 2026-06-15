@@ -9,9 +9,11 @@ from django.contrib import messages
 from humanize import intcomma
 
 from digital_store.forms import *
-from digital_store.models import Product, Category, ProfileUser
+from digital_store.models import Product, Category
 
 from digital_store.utils import CartAddDelete
+
+from digital_store.templatetags.user_roles import is_seller, is_buyer 
 
 # class MainPage(ListView):
 #     model = Category
@@ -115,13 +117,15 @@ def register_view(request):
 
         if form.is_valid():
             phone = form.cleaned_data['phone']
+            role = form.cleaned_data['role']
             if User.objects.filter(username=phone).exists():
                 form.add_error('phone', 'Этот номер уже используется')
             else:
                 user = form.save(commit=False)
                 user.username = phone
                 user.save()
-                ProfileUser.objects.create(user=user)
+                if role == 'buyer':
+                    BuyerProfile.objects.create(user=user)
                 login(request, user)
                 return redirect('home')
 
@@ -135,12 +139,17 @@ def register_view(request):
     return render(request, 'digital_store/register.html', {'form': form})
 
 
-def profile_user_view(request):
-    user = request.user
-    profile = ProfileUser.objects.get(user=user)
-    edit = request.GET.get('edit') == 'true'
 
-    error = None
+
+def profile_user_view(request):
+
+    user = request.user
+    if is_buyer(user):
+        profile = BuyerProfile.objects.get(user=user)
+        edit = request.GET.get('edit') == 'true'
+        error = None
+
+    
 
     if request.method == 'POST':
         phone = request.POST.get('phone')
@@ -153,21 +162,56 @@ def profile_user_view(request):
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
 
-            if request.FILES.get('image'):
-                profile.image = request.FILES.get('image')
 
             user.save()
             profile.save()
 
             return redirect('profile')
 
+    orders = Order.objects.filter(buyer=profile)
+    total_orders = orders.count()
+    cart = Cart.objects.get(buyer=profile)
+    cart_products = ProductCart.objects.filter(cart=cart)
+    cart_total_products = 0
+    for p in cart_products:
+        print(p.quantity)
+        cart_total_products += p.quantity
+
     return render(request, 'digital_store/profile.html', {
         'profile': profile,
         'edit': edit,
         'user': user,
         'error': error,
+        'total_orders': total_orders,
+        'cart_total_products': cart_total_products  ,
     })
 
+
+
+
+
+def seller_profile(request):
+    if request.user.is_authenticated:
+        if is_seller(request.user):
+            seller = SellerProfile.objects.get(user=request.user)
+            products = Product.objects.filter(seller=seller)
+            total_products = products.count()
+        
+            context = {
+                'seller_profile': seller,
+                'products': products,
+                'total_products': total_products
+            }
+            
+            return render(request, 'digital_store/seller_profile.html', context)
+
+            if request.method == 'POST':
+                user = request.user
+                
+
+        else:
+            return redirect("home")            
+            
 
 
 
@@ -188,30 +232,33 @@ def edit_password_view(request):
 
 
 ####### Корзина
-
 def add_cart_view(request, slug, action):
-    cart_class = CartAddDelete(request)
-    cart_class = cart_class.change_cart(slug, action)
-    return redirect('home')
+    if is_buyer(request.user):
+        cart_class = CartAddDelete(request)
+        cart_class = cart_class.change_cart(slug, action)
+        return redirect('home')
 
 # Изменить продукты в корзину
 def change_cart_view(request, slug, action):
-    cart_class = CartAddDelete(request)
-    cart_class = cart_class.change_cart(slug, action)
+    if is_buyer(request.user):
+        cart_class = CartAddDelete(request)
+        cart_class = cart_class.change_cart(slug, action)
 
-    return redirect('cart')
+        return redirect('cart')
 
 # Просмотр корзины
 def get_cart_view(request):
-    cart_class = CartAddDelete(request)
-    context = cart_class.cart_view()
+    if is_buyer(request.user):
+        cart_class = CartAddDelete(request)
+        context = cart_class.cart_view()
 
-    return render(request, 'digital_store/cart.html', context)
+        return render(request, 'digital_store/cart.html', context)
 
 
 
 def get_page_checkout(request):
     user = request.user
+    buyer = user.buyer_profile
     order_class = CartAddDelete(request)
     data = order_class.cart_view()
     cart = data['cart']
@@ -230,7 +277,6 @@ def get_page_checkout(request):
         
         Цена заказа: {intcomma(order.price)}
         '''
-        # get_bot(text)
 
         ################## bot
         order_class.clear_all(request)
@@ -238,14 +284,14 @@ def get_page_checkout(request):
 
 
     context = {
-        'user': user,
+        'buyer': buyer,
         'cart': cart,
     }
     return render(request, 'digital_store/order.html', context)
 
 
 def success(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user, )
+    order = get_object_or_404(Order, id=order_id, buyer=request.user.buyer_profile)
     context = {
         'order': order,
     }
@@ -276,47 +322,47 @@ def success(request, order_id):
 ########################################################################################################################
 
 
-def get_category(request):
-    categories = Category.objects.all().order_by('id')
-    return render(request, 'digital_store/form_list.html', {'categories': categories, 'title': 'title'})
+# def get_category(request):
+#     categories = Category.objects.all().order_by('id')
+#     return render(request, 'digital_store/form_list.html', {'categories': categories, 'title': 'title'})
 
 
-def delete_category(request, id):
-    category = get_object_or_404(Category, id=id)
-    if request.method == "GET":
-        category.delete()
-    return redirect('category_list')
+# def delete_category(request, id):
+#     category = get_object_or_404(Category, id=id)
+#     if request.method == "GET":
+#         category.delete()
+#     return redirect('category_list')
 
 
-def get_category_detail(request, id):
-    if request.method == 'GET':
-        category = Category.objects.get(id=id)
-        return render(request, 'digital_store/category_detail.html', {'category': category})
-    elif request.method == 'POST':
-        category = get_object_or_404(Category, id=id)
-        form = CategoryForm(request.POST, request.FILES, instance=category)
-        if form.is_valid():
-            print(request.FILES)
-            print(form.cleaned_data)
-            form.save()
-        else:
-            print("ERROR:", form.errors)
+# def get_category_detail(request, id):
+#     if request.method == 'GET':
+#         category = Category.objects.get(id=id)
+#         return render(request, 'digital_store/category_detail.html', {'category': category})
+#     elif request.method == 'POST':
+#         category = get_object_or_404(Category, id=id)
+#         form = CategoryForm(request.POST, request.FILES, instance=category)
+#         if form.is_valid():
+#             print(request.FILES)
+#             print(form.cleaned_data)
+#             form.save()
+#         else:
+#             print("ERROR:", form.errors)
 
-        return redirect('category_list')
-
-
-def add_category(request):
-    form = CategoryForm(request.POST, request.FILES)
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('category_list')
-
-    return render(request, 'digital_store/add_form.html', {
-        'form': form
-    })
+#         return redirect('category_list')
 
 
-def hello():
-    return render('HELOOOOOOOOOOOOO')
+# def add_category(request):
+#     form = CategoryForm(request.POST, request.FILES)
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save()
+#             return redirect('category_list')
+
+#     return render(request, 'digital_store/add_form.html', {
+#         'form': form
+#     })
+
+
+# def hello():
+#     return render('HELOOOOOOOOOOOOO')
 

@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('profile/', profile_user_view, name='profile'),
+    path('seller_profile/', seller_profile, name='seller_profile'),
     path('settings/', edit_password_view, name='settings'),
     path('add_cart/<slug:slug>/<str:action>/',  add_cart_view, name='add_cart'),
     path('change_cart/<slug:slug>/<str:action>/', change_cart_view, name='change_cart'),

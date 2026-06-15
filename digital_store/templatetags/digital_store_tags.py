@@ -24,5 +24,3 @@ def query_params(context, **kwargs):
             del query[key]
 
     return query.urlencode()
-
-

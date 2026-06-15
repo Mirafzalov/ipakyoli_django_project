@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+
+{% block main %}
+<div class="store">
+
+    <!-- HERO BANNER ONLY -->
+    <div class="store__hero">
+        <img class="store__banner" src="{{ seller_profile.get_banner }}">
+        <div class="store__overlay"></div>
+    </div>
+
+    <!-- STORE INFO (BELOW BANNER) -->
+    <div class="store__info">
+
+        <img class="store__logo" src="{{ seller_profile.get_logo }}">
+
+        <div class="store__text">
+
+            <h1 class="store__name">{{ seller_profile.store_name }}</h1>
+
+            <p class="store__desc">{{ seller_profile.description }}</p>
+
+        </div>
+
+        <button class="store__btn">Follow</button>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="store__stats">
+
+        <div><b>{{ total_products }}</b><span>Продукты</span></div>
+        <div><b>4.8</b><span>Рейтинг</span></div>
+        <div><b>{{ seller_profile.created_at|date:"Y-m-d" }}</b><span>Работает с</span></div>
+
+    </div>
+
+
+    <div class="store-products">
+
+        <div class="store-products__header">
+            <!-- {% for product in products %} -->
+            {% include 'digital_store/components/_card.html' %}
+            <!-- {% endfor %} -->
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}
