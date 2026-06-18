@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+{{ form.media }}
+
+<div class="product-editor">
+
+    <div class="product-editor__header">
+
+        <div>
+            <h1>Product Editor</h1>
+            <p>Create or update your product information</p>
+        </div>
+
+        <button class="product-editor__save" type="submit" form="productForm">
+            Save Product
+        </button>
+
+    </div>
+
+    <form id="productForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="product-editor__grid">
+
+            <!-- LEFT SIDE -->
+            <div class="product-editor__left">
+
+                <div class="product-card">
+
+                    <h3>Basic Information</h3>
+
+                    <div class="field">
+                        <label>Название товара</label>
+                        <input type="text" name="title" value="{{ product.title }}">
+                    </div>
+
+                    <div class="field">
+                        <label>Описание</label>
+                        {{ form.description }}
+                    </div>
+
+                </div>
+
+                <div class="product-card">
+
+                    <div class="field">
+                        <label>Характеристики</label>
+                        {{ form.characteristic }}
+                    </div>
+
+                </div>
+
+                <div class="product-card">
+
+                    <h3>Фотки товара</h3>
+
+                    <input type="file" name="images" multiple accept="image/*">
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="product-editor__right">
+
+                <div class="product-card">
+
+                    <h3>Цена</h3>
+
+                    <div class="field">
+                        <label>Цена товара</label>
+                        <input type="number" name="price" value="{{ product.price }}">
+                    </div>
+
+                    <div class="field">
+                        <label>Скидка (%)</label>
+                        <input type="number" name="discount" value="{{ product.discount }}">
+                    </div>
+
+                </div>
+
+                <div class="product-card">
+
+                    <h3>Инвентарь</h3>
+
+                    <div class="field">
+                        <label>Количество</label>
+                        <input type="number" name="quantity" value="{{ product.quantity }}">
+                    </div>
+
+                    <div class="field">
+                        <label>Статус</label>
+                        <select name="is_active">
+                            <option value="true" {% if product.is_active %}selected{% endif %}>Active</option>
+                            <option value="false" {% if not product.is_active %}selected{% endif %}>Inactive</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="product-card">
+
+                    <h3>Organization</h3>
+
+                    <div class="field">
+                        <label>Category</label>
+                        <select name="category">
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{%endif%}>
+                                {{ category.title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Brand</label>
+                        <select name="brand">
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if product.brand.id == brand.id %}selected{% endif %}>
+                                {{ brand.title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="product-card">
+
+                    <h3>Product Color</h3>
+
+                    <div class="field">
+                        <label>Color Name</label>
+                        <input type="text" name="color_name" value="{{ product.color_name }}">
+                    </div>
+
+                    <div class="field">
+                        <label>Color Code</label>
+                        <input type="color" name="color_code" value="{{ product.color_code }}">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

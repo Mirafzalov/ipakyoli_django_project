@@ -7,7 +7,17 @@
 {% include 'components/_baner.html' %}
 
 <!-- CARD -->
-{% include 'digital_store/components/_card.html' %}
+<div class="container">
+
+    <div class="product-grid">
+        {% for product in products %}
+
+        {% include 'digital_store/components/_card.html' %}
+        
+        {% endfor %}
+
+    </div>
+
+</div>
 
 {% endblock main %}
-

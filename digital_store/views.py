@@ -9,9 +9,9 @@ from django.contrib import messages
 from humanize import intcomma
 
 from digital_store.forms import *
-from digital_store.models import Product, Category
+from digital_store.models import Product, Category, Brand
 
-from digital_store.utils import CartAddDelete
+from digital_store.utils import CartAction
 
 from digital_store.templatetags.user_roles import is_seller, is_buyer 
 
@@ -41,6 +41,7 @@ def product_list_view(request):
 def product_detail_view(request, slug, id):
     # It is for getting the product detail
     product = get_object_or_404(Product, id=id)
+    # product = Product.objects.get(id=id)
     # It is for getting similar products
     products = Product.objects.filter(category=product.category).exclude(id=product.id)
 
@@ -189,33 +190,173 @@ def profile_user_view(request):
 
 
 
-
-def seller_profile(request):
+# Seller Profile
+def seller_profile(request, id):
+    seller = SellerProfile.objects.get(id=id)
+    products = Product.objects.filter(seller=seller)
+    total_products = products.count()
+    
+    edit = request.GET.get("edit") == "true"
+    
     if request.user.is_authenticated:
-        if is_seller(request.user):
-            seller = SellerProfile.objects.get(user=request.user)
-            products = Product.objects.filter(seller=seller)
-            total_products = products.count()
         
-            context = {
-                'seller_profile': seller,
-                'products': products,
-                'total_products': total_products
-            }
+        error = None
+        
+        if request.method == 'POST' and  is_seller(request.user):
+            edit = request.GET.get('edit') == 'true'
             
-            return render(request, 'digital_store/seller_profile.html', context)
-
-            if request.method == 'POST':
-                user = request.user
+            store_name=request.POST.get('store_name')
+            if SellerProfile.objects.exclude(id=id).filter(store_name=store_name):
+                error = '- Это название уже используется'
                 
-
-        else:
-            return redirect("home")            
+            else:
+                seller.store_name = request.POST.get('store_name')
             
+                seller.description = request.POST.get('description')
+            
+                if request.FILES.get('logo'):
+                    seller.logo = request.FILES['logo']
+                
+                if request.FILES.get('banner'):
+                    seller.banner = request.FILES['banner']
+                    
+                seller.save()
+                
+                return redirect('seller_profile', id=seller.id)
+
+            
+        
+
+        context = {
+            'seller_profile': seller,
+            'products': products,
+            'total_products': total_products,
+            'edit': edit,
+            'error': error
+        }
+            
+        return render(request, 'digital_store/seller_profile.html', context)
 
 
+####### Seller Dashboard
+
+def seller_dashboard(request):
+    if request.user.is_authenticated and is_seller(request.user):
+
+
+        seller = request.user.seller_profile
+        
+        products = Product.objects.filter(seller=seller)
+        
+        product_total = 0
+        active_total = 0
+        for p in products:
+            if p.is_active:
+                  active_total += 1
+            product_total += p.quantity
+                 
+        
+        context = {
+            'products': products, 
+            'product_total': product_total, 
+            'active_total': active_total,
+            'user': request.user,
+        }
+    
+        return render(request, 'digital_store/seller_dashboard.html', context)
+    
+    return redirect('home')
+
+
+def add_product(request):
+    if request.user.is_authenticated and is_seller(request.user):
+        
+        if request.method == 'POST':
+            form = ProductForm(request.POST)
+            
+            if form.is_valid():
+                product = form.save(commit=False)
+                product.seller = request.user.seller_profile
+                product.save()
+
+                images = request.FILES.getlist('images')
+                
+                for image in images:
+                    ProductImage.objects.create(product=product, image=image)
+                    
+                    
+                return redirect('seller_dashboard')
+            
+        else:
+            form = ProductForm()
+            
+            
+        categories = Category.objects.all()
+        brands = Brand.objects.all()
+        
+        context={
+            'form': form,
+            'categories': categories,
+            'brands': brands
+        }
+        return render(request, 'digital_store/product_form.html', context)        
+    
+    
+    return redirect('home')
+
+
+
+
+def edit_product(request, id):
+    if request.user.is_authenticated and is_seller(request.user):
+        seller = request.user.seller_profile
+        product = get_object_or_404(Product, seller=seller, id=id)
+        if request.method == 'POST':    
+            form = ProductForm(request.POST, request.FILES, instance=product)
+            
+            if form.is_valid():
+                product = form.save()
+                images = request.FILES.getlist('images')
+                
+                for image in images:
+                    ProductImage.objects.create(product=product, image=image)
+                    
+                return redirect('seller_dashboard')
+        
+        else:
+            form = ProductForm(instance=product)
+        
+        categories = Category.objects.all()
+        brands = Brand.objects.all()
+        
+        context = {
+            'form': form,
+            'categories': categories,
+            'brands': brands,
+            'product': product
+        }
+        return render(request, 'digital_store/product_form.html', context)
+    
+    
+    else:
+        return redirect('home')        
+
+            
+                
+    
+def delete_product(request, id):
+    if request.user.is_authenticated and is_seller(request.user):
+        seller = request.user.seller_profile
+        product = get_object_or_404(Product, seller=seller, id=id)
+        product.delete()
+        
+    return redirect('seller_dashboard')
+    
+############
+    
 
 def edit_password_view(request):
+    
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
 
@@ -232,24 +373,28 @@ def edit_password_view(request):
 
 
 ####### Корзина
-def add_cart_view(request, slug, action):
-    if is_buyer(request.user):
-        cart_class = CartAddDelete(request)
-        cart_class = cart_class.change_cart(slug, action)
-        return redirect('home')
+# def add_cart_view(request, slug, action):
+#     if is_buyer(request.user):
+#         cart_class = CartAddDelete(request)
+#         cart_class = cart_class.change_cart(slug, action)
+#         return redirect('home')
 
-# Изменить продукты в корзину
-def change_cart_view(request, slug, action):
+# Изменить продукты в корзине
+def change_cart_view(request, slug, action, id):
     if is_buyer(request.user):
-        cart_class = CartAddDelete(request)
-        cart_class = cart_class.change_cart(slug, action)
+        cart_class = CartAction(request)
+        if action == 'add':
+            cart_class.add_product(slug, id)
+        
+        elif action == 'remove':
+            cart_class.remove_product(slug, id) 
 
         return redirect('cart')
 
 # Просмотр корзины
 def get_cart_view(request):
     if is_buyer(request.user):
-        cart_class = CartAddDelete(request)
+        cart_class = CartAction(request)
         context = cart_class.cart_view()
 
         return render(request, 'digital_store/cart.html', context)
@@ -259,7 +404,7 @@ def get_cart_view(request):
 def get_page_checkout(request):
     user = request.user
     buyer = user.buyer_profile
-    order_class = CartAddDelete(request)
+    order_class = CartAction(request)
     data = order_class.cart_view()
     cart = data['cart']
     if request.method == 'POST':

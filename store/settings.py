@@ -57,9 +57,28 @@ INSTALLED_APPS = [
 
 ]
 
+
+
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 500,
+    "width": "100%",
+    "paste_data_images": True,
+    "paste_as_text": False,
+    "cleanup": False,
+    "verify_html": False,
+
+    "plugins": "table paste lists link image code",
+    "toolbar": "undo redo | bold italic | table | bullist numlist | code",
+}
+
+
+
+
+
 JAZZMIN_UI_TWEAKS = {
     "theme": "slate",
 }
+
 
 
 MIDDLEWARE = [

@@ -37,7 +37,7 @@
             <i class="fa-solid fa-user" style="color: white; font-size: 20px"></i>
         </a>
         {% elif user|is_seller %}
-        <a href="{% url 'seller_profile' %}">
+        <a href="{% url 'seller_profile' user.seller_profile.id %}">
             <i class="fa-solid fa-user" style="color: white; font-size: 20px"></i>
         </a>
         {% endif %}

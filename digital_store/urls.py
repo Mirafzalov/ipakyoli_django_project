@@ -11,13 +11,23 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('profile/', profile_user_view, name='profile'),
-    path('seller_profile/', seller_profile, name='seller_profile'),
+    path('seller_profile/<int:id>/', seller_profile, name='seller_profile'),
+    
+    path('seller_dashboard/', seller_dashboard, name='seller_dashboard'),
+    path('seller_dashboard/add_product/', add_product, name='add_product'),
+    path('seller_dashboard/edit_product/<int:id>/', edit_product, name='edit_product'),
+    path('seller_dashboard/delete_product/<int:id>/', delete_product, name='delete_product'),
+    
+    
     path('settings/', edit_password_view, name='settings'),
     path('add_cart/<slug:slug>/<str:action>/',  add_cart_view, name='add_cart'),
-    path('change_cart/<slug:slug>/<str:action>/', change_cart_view, name='change_cart'),
+    
     path('cart/', get_cart_view, name='cart'),
+    
+    path('cart/<str:action>/<slug:slug>/<int:id>/', change_cart_view, name='change_cart'),
+    
     path('order/', get_page_checkout, name='order'),
-    path('success/<int:order_id>/', success, name='success'),
+    path('order/success/<int:order_id>/', success, name='success'),
     # path('cart/delete/<slug:slug>/', cart_product_delete, name='cart_delete'),
 
     # Telegram

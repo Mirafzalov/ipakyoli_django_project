@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.utils.timezone import localtime
 from tinymce.models import HTMLField
 
+from django.utils.text import slugify
+
 
 class Category(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название категори')
@@ -62,7 +64,7 @@ class SellerProfile(models.Model):
     store_name = models.CharField(max_length=150, verbose_name='Название магазина')
     logo = models.ImageField(upload_to='sellers/logos/', verbose_name='Логотип магазина', blank=True)
     banner = models.ImageField(upload_to='sellers/banners/', verbose_name='Баннер магазина', blank=True)
-    description = models.TextField(max_length=500, verbose_name='Описание магазина', blank=True)
+    description = models.TextField(max_length=800, verbose_name='Описание магазина', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
@@ -80,7 +82,6 @@ class SellerProfile(models.Model):
         else:
             return '-'
 
-    # def products.
 
 
     def __str__(self):
@@ -121,12 +122,19 @@ class Product(models.Model):
         new_price = int(self.price / 12)
         return new_price
 
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    
+
     def __str__(self):
         return self.title
 
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
+        
 
 
 
@@ -194,6 +202,7 @@ class ProductCart(models.Model):
             return self.product.discount_price() * self.quantity
         else:
             return self.product.price * self.quantity
+        
 
 
 

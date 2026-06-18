@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block main %}
+
+<div class="seller-dashboard">
+
+    <!-- Sidebar -->
+    <aside class="seller-sidebar">
+
+        <div class="seller-sidebar__logo">
+            <h2>Seller Panel</h2>
+        </div>
+
+        <nav class="seller-sidebar__nav">
+
+            <a href="#" class="seller-nav-item seller-nav-item--active">
+                📦 Products
+            </a>
+
+            <a href="#" class="seller-nav-item">
+                ➕ Add Product
+            </a>
+
+            <a href="#" class="seller-nav-item">
+                📊 Analytics
+            </a>
+
+            <a href="#" class="seller-nav-item">
+                ⚙ Settings
+            </a>
+
+            <a href="#" class="seller-nav-item">
+                🚪 Logout
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- Main -->
+    <main class="seller-main">
+
+        <!-- Header -->
+        <div class="seller-header">
+
+            <div>
+                <h1>Продовец: {{ user.first_name }}</h1>
+                <p></p>
+            </div>
+
+            <a href="{% url 'add_product' %}" class="seller-btn-primary">
+                + Add Product
+            </a>
+
+        </div>
+
+        <!-- Stats -->
+        <div class="seller-stats">
+
+            <div class="seller-stat-card">
+                <h3>{{ product_total }}</h3>
+                <span>Total Products</span>
+            </div>
+
+            <div class="seller-stat-card">
+                <h3>{{ active_total }}</h3>
+                <span>Active</span>
+            </div>
+
+            <div class="seller-stat-card">
+                <h3>34</h3>
+                <span>Out of Stock</span>
+            </div>
+
+            <div class="seller-stat-card">
+                <h3>4.8 ★</h3>
+                <span>Store Rating</span>
+            </div>
+
+        </div>
+
+        <!-- Search -->
+        <div class="seller-search">
+            <input type="text" placeholder="Search products...">
+        </div>
+
+        <!-- Products -->
+
+        <div class="seller-products">
+            
+            {% for product in products %}
+            <!-- Product -->
+            <div class="seller-product-card">
+
+                <img src="{{ product.images.first.image.url }}" class="seller-product-image">
+
+                <div class="seller-product-info">
+
+                    <h3>{{ product.title }}</h3>
+
+                    <p>{{ product.category }}</p>
+
+                    <span class="seller-price">
+                        {{ product.price|intcomma }} сум
+                    </span>
+
+                </div>
+
+                <div class="seller-status seller-status--active">
+                    {{ product.is_active }}
+                </div>
+
+                <div class="seller-actions">
+
+                    <a href="{% url 'edit_product' product.id %}" class="seller-edit-btn">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'delete_product' product.id %}" class="seller-delete-btn">
+                        Delete
+                    </a>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}
