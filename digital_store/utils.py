@@ -1,58 +1,113 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from humanize import intcomma
-
+from django.shortcuts import render, get_object_or_404, redirect
 from digital_store.models import Product, ProductCart, Cart, Order, ProductOrder
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
+class CartAction:
 
-class CartAddDelete:
 
     def __init__(self, request):
         self.user = request.user
+        self.buyer = self.user.buyer_profile
 
+    def get_or_create_cart(self):
+        cart, created = Cart.objects.get_or_create(buyer=self.buyer)
+        return cart
+    
+    #Добавить Товар в корзину
+    def add_product_cart(self, slug, id):
+        try:
+            product = Product.objects.get(slug=slug, id=id)
+            
+        except Product.DoesNotExist:
+            return {'error': 'Такого товара нету'}
+        
+        
+        if product.quantity <= 0:
+            return {'error': 'Товара нет в наличии'}
+        
+        cart = self.get_or_create_cart()
+        product_cart, created = ProductCart.objects.get_object_or_create(product=product, cart=cart)
 
-    def change_cart(self, slug, action):
-
-        product = Product.objects.get(slug=slug)
-
-        cart, created = Cart.objects.get_or_create(user=self.user)
-
-        product_cart, product_created = ProductCart.objects.get_or_create(cart=cart, product=product)
-
-        if product_created == False:
-            if action == 'add' and product.quantity > 0 and product_cart.quantity < product.quantity:
+        if not created:
+            if product.quantity > 0 and product_cart.quantity < product.quantity:
                 product_cart.quantity += 1
-            elif action == 'delete':
-                product_cart.quantity -= 1
+                product_cart.save()
+        
+        
+    # Убарть Товар с корзины        
+    def remove_product_cart(self):
+        try:
+            product = Product.objects.get(slug=slug, id=id)
+            
+        except Product.DoesNotExist:
+            return {'error': 'Такого товара нету'}
+        
+        
+        if product.quantity <= 0:
+            return {'error': 'Товара нет в наличии'}
+        
+        cart = self.get_or_create_cart()
+        product_cart = get_object_or_404(ProductCart, product=product, cart=cart)
 
-            elif action == 'clear':
-                product_cart.quantity = 0
-
+        if product_cart.quantity > 0:
+            product_cart.quantity -= 1
             product_cart.save()
-
-            if product_cart.quantity <= 0:
-                product_cart.delete()
-
-    # Просмотр корзины
+        
+        if product_cart.quantity <= 0:
+            product_cart.delete()
+            
+    
     def cart_view(self):
-        cart = get_object_or_404(Cart, user=self.user)
-        products_cart = cart.productcart_set.all()
+        cart = self.get_or_create_cart()
+        products_cart = ProductCart.objects.filter(cart=cart)
         cart_price = cart.total_price
-
-        print(products_cart)
-
+        
         return {
             'products_cart': products_cart,
             'cart': cart,
             'cart_price': cart_price
         }
+        
+        
+        
+            
+            
+        
+    # def change_cart(self, slug, action, id):
 
+    #     product = Product.objects.get(slug=slug, id=id)
+
+    #     cart, created = Cart.objects.get_or_create(buyer=self.buyer)
+    #     print('It worked')
+
+    #     product_cart, product_created = ProductCart.objects.get_or_create(cart=cart, product=product)
+
+    #     if product_created == False:
+    #         if action == 'add' and product.quantity > 0 and product_cart.quantity < product.quantity:
+    #             product_cart.quantity += 1
+    #         elif action == 'delete':
+    #             product_cart.quantity -= 1
+
+    #         elif action == 'clear':
+    #             product_cart.quantity = 0
+
+    #         product_cart.save()
+
+    #         if product_cart.quantity <= 0:
+    #             product_cart.delete()
+
+
+    @login_required
+    @require_POST
     def checkout_view(self, request):
         data = self.cart_view()
         address = request.POST.get('address')
         comment = request.POST.get('comment')
 
-        order = Order.objects.create(user=self.user, price=data['cart_price'], address=address, comment=comment)
+        order = Order.objects.create(buyer=self.buyer, price=data['cart_price'], address=address, comment=comment)
 
         for p_cart in data['products_cart']:
             ProductOrder.objects.create(order=order, product=p_cart.product, quantity=p_cart.quantity)
@@ -69,75 +124,11 @@ class CartAddDelete:
 
         return{
             'order': order,
-            'user': self.user
+            'buyer': self.buyer
         }
 
 
     def clear_all(self, request):
-        cart = Cart.objects.get(user=request.user)
+        cart = Cart.objects.get(buyer=self.buyer)
         cart.productcart_set.all().delete()
-
-
-
-
-# def get_order_history():
-#     # orders = Order.objects.all().order_by('-created_at')[:10]
-#     orders = Order.objects.all().order_by('-created_at')[:10]
-#     text = []
-#     for order in orders:
-#         text.append(f'''
-#         Пользователь: {order.user.first_name}
-#
-#         Номер телефона: {order.user.username}
-#
-#         Номер заказа: #{order.id}
-#
-#         Цена заказа: {intcomma(order.price)}
-#         --------------------------------------------------------------
-#         Заказ создан:  {(order.created_at).strftime("%d.%m.%Y %H:%M")}
-#         ''')
-#
-#     print(f'''
-# #######################
-# {text}
-# ####################''')
-#     print(text)
-#     return text
-
-# Telegram get history api
-# def get_history(request):
-#     orders = Order.objects.all()[:1]
-#
-#     data = []
-#
-#     for order in orders:
-#         data.append({
-#             'user': order.user.first_name,
-#             'phone': order.user.username,
-#             'order_id': order.id,
-#             'price': order.price,
-#             'created_at': order.created_at
-#         })
-#     print(data)
-#     return JsonResponse(data, safe=False)
-#
-# def get_url():
-#     url = 'http://127.0.0.1:8000/api/orders/'
-#     return url
-#
-#
-# def get_order():
-#     orders = Order.objects.all().order_by('-id')
-#     page = []
-#     order_page = []
-#     for order in orders:
-#         page.append(order)
-#         if len(page) == 3:
-#             order_page.append(page)
-#             page = []
-#     if page:
-#         order_page.append(page)
-#
-#     return order_page
-
 

@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% block main %}
-<div class="checkout">
+
+
+<div class="checkout" style="margin-bottom: 210px; margin-top: 100px;">
 
     <h2 class="checkout__title">Оформление заказа</h2>
 
@@ -32,7 +34,7 @@
                 <label class="checkout__label">Комментарий</label>
                 <textarea class="checkout__textarea" name="comment"></textarea>
 
-            </form>
+
 
         </div>
 
@@ -46,10 +48,7 @@
                 <b>{{ cart.total_quantity }}</b>
             </div>
 
-<!--            <div class="checkout__line">-->
-<!--                <span>Subtotal</span>-->
-<!--                <b>19 000 000</b>-->
-<!--            </div>-->
+
 
             <div class="checkout__line checkout__line--total">
                 <span>Итоговая сумма</span>
@@ -59,6 +58,7 @@
             <button class="checkout__btn" type="submit" form="checkout-form" style="font-size: 15px">
                 Заказать
             </button>
+            </form>
 
         </div>
 

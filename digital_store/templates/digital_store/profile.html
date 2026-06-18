@@ -10,7 +10,6 @@
 
         <div class="left">
 
-            <img src="{{ profile.get_image }}" class="avatar">
 
             <div class="identity">
 
@@ -35,24 +34,6 @@
 
         <div class="profile-body">
 
-            <!-- PHOTO -->
-            {% if edit %}
-            <div class="info-item image-edit">
-                <div class="label">Фото профиля</div>
-
-                <div class="image-upload">
-
-                    <img src="https://via.placeholder.com/100"
-                         class="preview-avatar">
-
-                    <input type="file"
-                           name="image"
-                           class="file-input"
-                           {% if not edit %}disabled{% endif %}>
-
-                </div>
-            </div>
-            {% endif %}
 
             <!-- FIRST NAME -->
             <div class="info-item">
@@ -115,8 +96,8 @@
     <div class="profile-stats">
 
         <div class="stat">
-            <span>Заказы</span>
-            <h3>12</h3>
+            <span>Заказ сделано</span>
+            <h3>{{ total_orders }}</h3>
 
         </div>
 
@@ -128,7 +109,7 @@
 
         <div class="stat">
             <span>Корзина</span>
-            <h3>3</h3>
+            <h3>{{ cart_total_products }}</h3>
 
         </div>
 

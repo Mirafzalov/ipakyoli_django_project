@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% load user_roles %}
+
+{% block main %}
+<div class="store">
+
+    <!-- HERO BANNER -->
+    <div class="store__hero">
+        <img class="store__banner" src="{{ seller_profile.get_banner }}">
+        <div class="store__overlay"></div>
+    </div>
+
+    <!-- STORE INFO -->
+    <div class="store__info">
+
+        <img class="store__logo" src="{{ seller_profile.get_logo }}">
+
+        <div class="store__text">
+            <h1 class="store__name">{{ seller_profile.store_name }}</h1>
+            <p class="store__desc">{{ seller_profile.description }}</p>
+        </div>
+
+        {% if user|is_seller %}
+        <a href="?edit=true" class="store__btn">Редактировать</a>
+        {% endif %}
+
+    </div>
+
+    <!-- STATS -->
+    <div class="store__stats">
+        <div><b>{{ total_products }}</b><span>Продукты</span></div>
+        <div><b>4.8</b><span>Рейтинг</span></div>
+        <div><b>{{ seller_profile.created_at|date:"Y-m-d" }}</b><span>Работает с</span></div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="store-products">
+        <div class="store-products__header">
+
+            <div class="container">
+                <div class="product-grid">
+                    {% for product in products %}
+                    {% include 'digital_store/components/_card.html' %}
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- EDIT PANEL (ONLY IF EDIT MODE) -->
+{% if user|is_seller %}
+{% if edit %}
+<div class="edit-panel">
+
+    <div class="edit-panel__header">
+        <h2>Edit Store</h2>
+        <a href="." class="close-btn">✕</a>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>Название магазина</label>
+
+        <input type="text" name="store_name" value="{{ seller_profile.store_name }}">
+        {% if error %}
+        <p style="font-size: 15px;color: red;">{{ error }}</p>
+        {% endif %}
+
+        <label>Описание</label>
+        <textarea name="description">{{ seller_profile.description }}</textarea>
+
+        <label>Логотип</label>
+        <input type="file" name="logo">
+
+        <label>Банер</label>
+        <input type="file" name="banner">
+
+        <button type="submit">Сохранить</button>
+
+    </form>
+
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}
