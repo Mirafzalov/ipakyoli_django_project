@@ -14,12 +14,12 @@
 
         <nav class="seller-sidebar__nav">
 
-            <a href="#" class="seller-nav-item seller-nav-item--active">
-                📦 Products
+            <a href="?action=products" class="seller-nav-item seller-nav-item--active">
+                📦 Товары
             </a>
 
-            <a href="#" class="seller-nav-item">
-                ➕ Add Product
+            <a href="?action=orders" class="seller-nav-item">
+                📝 Заказы
             </a>
 
             <a href="#" class="seller-nav-item">
@@ -60,17 +60,17 @@
 
             <div class="seller-stat-card">
                 <h3>{{ product_total }}</h3>
-                <span>Total Products</span>
+                <span>Товары</span>
             </div>
 
             <div class="seller-stat-card">
                 <h3>{{ active_total }}</h3>
-                <span>Active</span>
+                <span>Активные</span>
             </div>
 
             <div class="seller-stat-card">
-                <h3>34</h3>
-                <span>Out of Stock</span>
+                <h3>{{ order_quantity }}</h3>
+                <span>Товар продано</span>
             </div>
 
             <div class="seller-stat-card">
@@ -86,9 +86,9 @@
         </div>
 
         <!-- Products -->
-
+        {% if action == 'products' %}
         <div class="seller-products">
-            
+
             {% for product in products %}
             <!-- Product -->
             <div class="seller-product-card">
@@ -101,10 +101,17 @@
 
                     <p>{{ product.category }}</p>
 
-                    <span class="seller-price">
-                        {{ product.price|intcomma }} сум
-                    </span>
+                    <h4>Количество:
+                        <span class="seller-price" style="padding-bottom: -100px;">
+                            {{ product.quantity }}
+                        </span>
+                    </h4>
 
+                    <h4>Цена:
+                        <span class="seller-price">
+                            {{ product.price|intcomma }} сум
+                        </span>
+                    </h4>
                 </div>
 
                 <div class="seller-status seller-status--active">
@@ -127,6 +134,63 @@
             {% endfor %}
 
         </div>
+        {% endif %}
+
+        <!-- Orders -->
+        {% if action == 'orders' %}
+        <div class="seller-orders">
+
+            <h2 class="seller-section-title">Заказы</h2>
+
+            {% for product_order in products_order %}
+            <div class="seller-order-card">
+
+                <div class="seller-order-left">
+
+                    <img src="{{ product_order.product.images.first.image.url }}"
+                        alt="{{ product_order.product.title }}" class="seller-order-image">
+
+                    <h3>{{ product_order.product.title }}</h3>
+
+                    <p>
+                        Заказ №{{ product_order.order.id }}
+                    </p>
+
+                    <p>
+                        Создан: {{ product_order.order.created_at }}
+                    </p>
+
+                    <p>
+                        Покупатель:
+                        {{ product_order.order.buyer.user.first_name }}
+                    </p>
+                </div>
+
+                <div class="seller-order-right">
+
+                    <div class="seller-order-quantity">
+                        {{ product_order.quantity }} шт.
+                    </div>
+
+                    <div class="seller-order-price">
+                        {{ product_order.product.price|intcomma }} сум
+                    </div>
+
+                </div>
+
+            </div>
+            {% empty %}
+
+            <div class="seller-empty-orders">
+                Пока нет заказов.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        tehn just fix teh postioning of the product info
+        {% endif %}
 
     </main>
 
