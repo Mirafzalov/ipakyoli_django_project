@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
-
+{% load user_roles %}
 
 {% block main %}
 
@@ -36,9 +36,9 @@
                 {% if product.discount %}
                 <h3>{{ product.discount_price|intcomma }} sum</h3>
                 <span class="old_price">
-                {{ product.price|intcomma }} sum</span>
+                    {{ product.price|intcomma }} sum</span>
                 {% else %}
-                 <h3>{{ product.price|intcomma }} sum</h3>
+                <h3>{{ product.price|intcomma }} sum</h3>
                 {% endif %}
 
             </div>
@@ -61,7 +61,17 @@
 
         <!-- BUTTONS -->
         <div class="buttons">
-            <a class="btn cart_btn">Добавить в корзину 🛒</a>
+
+            {% if user|is_buyer %}
+            {% if product.quantity > 0 and product.is_active %}
+            <a href="{% url 'add_cart' 'add' product.slug product.id %}">
+                <button class="btn">Добавить в корзину 🛒</button>
+            </a>
+            {% elif product.quantity == 0 or product.is_active == False %}
+            <button class="btn" style="background-color: #d3d3d3">Сейчас отсутствует в продаже ❌</button>
+            {% endif %}
+            {% endif %}
+
             <a class="btn installment_btn">Купить в рассрочку</a>
         </div>
 

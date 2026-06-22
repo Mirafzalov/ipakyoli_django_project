@@ -39,7 +39,7 @@
         </div>
         {% if user|is_buyer %}
         {% if product.quantity > 0 and product.is_active %}
-        <a href="{% url 'add_cart' product.slug 'add' %}">
+        <a href="{% url 'add_cart' 'add' product.slug product.id %}">
             <button class="btn">Добавить в корзину 🛒</button>
         </a>
         {% elif product.quantity == 0 or product.is_active == False %}

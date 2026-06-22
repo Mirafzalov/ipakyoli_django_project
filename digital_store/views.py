@@ -7,13 +7,15 @@ from django.contrib.auth.models import User
 from django.views.generic import DetailView, ListView
 from django.contrib import messages
 from humanize import intcomma
+from django.contrib.auth.decorators import login_required
 
 from digital_store.forms import *
 from digital_store.models import Product, Category, Brand
 
-from digital_store.utils import CartAction
+from digital_store.utils import CartAction, OrderAction
 
 from digital_store.templatetags.user_roles import is_seller, is_buyer 
+from django.http import Http404
 
 # class MainPage(ListView):
 #     model = Category
@@ -40,18 +42,22 @@ def product_list_view(request):
 
 def product_detail_view(request, slug, id):
     # It is for getting the product detail
-    product = get_object_or_404(Product, id=id)
-    # product = Product.objects.get(id=id)
+    try: 
+        product = get_object_or_404(Product, slug=slug, id=id)
+        
+    except Http404:
+        return render(request,'digital_store/components/_404.html', status=404)        
+    
     # It is for getting similar products
     products = Product.objects.filter(category=product.category).exclude(id=product.id)
 
     context = {
         'products': products,
-        'product': product
+        'product': product,
     }
 
-    if product.slug != slug:
-        return redirect('product_detail', slug=product.slug, id=product.id)
+    # if product.slug != slug:
+    #     return redirect('product_detail', slug=product.slug, id=product.id)
 
     return render(request, 'digital_store/product_detail.html', context)
 
@@ -127,6 +133,8 @@ def register_view(request):
                 user.save()
                 if role == 'buyer':
                     BuyerProfile.objects.create(user=user)
+                elif role == 'seller':
+                    SellerProfile.objects.create(user=user, store_name=f"{user.first_name}'s Store")
                 login(request, user)
                 return redirect('home')
 
@@ -242,30 +250,42 @@ def seller_profile(request, id):
 
 def seller_dashboard(request):
     if request.user.is_authenticated and is_seller(request.user):
-
-
-        seller = request.user.seller_profile
-        
+        seller = request.user.seller_profile        
         products = Product.objects.filter(seller=seller)
-        
+                
         product_total = 0
         active_total = 0
         for p in products:
             if p.is_active:
-                  active_total += 1
+                active_total += 1
             product_total += p.quantity
-                 
+                
+    
+        products_order = ProductOrder.objects.filter(product__in=products)
+      
+        
+        total = 0
+        for product in products_order:
+            total += product.quantity
+            
+        
+        action = request.GET.get('action', 'products')
         
         context = {
             'products': products, 
+            'products_order': products_order,
+            'order_quantity': total,
             'product_total': product_total, 
             'active_total': active_total,
             'user': request.user,
+            'action': action
+            
+            
         }
     
         return render(request, 'digital_store/seller_dashboard.html', context)
     
-    return redirect('home')
+    return render(request, 'digital_store/components/_404.html')
 
 
 def add_product(request):
@@ -302,7 +322,7 @@ def add_product(request):
         return render(request, 'digital_store/product_form.html', context)        
     
     
-    return redirect('home')
+    return render(request, 'digital_store/components/_404.html')
 
 
 
@@ -339,7 +359,7 @@ def edit_product(request, id):
     
     
     else:
-        return redirect('home')        
+        return render(request, 'digital_store/components/_404.html')
 
             
                 
@@ -350,46 +370,64 @@ def delete_product(request, id):
         product = get_object_or_404(Product, seller=seller, id=id)
         product.delete()
         
-    return redirect('seller_dashboard')
+        return redirect('seller_dashboard')
+    
+    else:
+        return render(request, 'digital_store/components/_404.html')
+        
+
+
+
+
+
     
 ############
     
 
 def edit_password_view(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = PasswordChangeForm(request.user, request.POST)
+
+            if form.is_valid():
+                user = form.save()
+
+                update_session_auth_hash(request, user)
+                return redirect('home')
+        else:
+            form = PasswordChangeForm(request.user)
+
+        return render(request, 'digital_store/settings.html', {'form': form})
     
-    if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-
-        if form.is_valid():
-            user = form.save()
-
-            update_session_auth_hash(request, user)
-            return redirect('home')
     else:
-        form = PasswordChangeForm(request.user)
+        return render(request, 'digital_store/components/_404.html')
 
-    return render(request, 'digital_store/settings.html', {'form': form})
 
 
 
 ####### Корзина
-# def add_cart_view(request, slug, action):
-#     if is_buyer(request.user):
-#         cart_class = CartAddDelete(request)
-#         cart_class = cart_class.change_cart(slug, action)
-#         return redirect('home')
+def add_cart_view(request, action, slug, id):
+    if is_buyer(request.user):
+        if action == 'add':
+            cart_class = CartAction(request)
+            cart_class = cart_class.add_product_cart(slug, id)
+            return redirect('home')
 
 # Изменить продукты в корзине
 def change_cart_view(request, slug, action, id):
     if is_buyer(request.user):
         cart_class = CartAction(request)
         if action == 'add':
-            cart_class.add_product(slug, id)
+            cart_class.add_product_cart(slug, id)
         
         elif action == 'remove':
-            cart_class.remove_product(slug, id) 
+            cart_class.remove_product_cart(slug, id) 
+            
+        elif action == 'clear':
+            cart_class.clear_all(slug, id)
 
         return redirect('cart')
+    
 
 # Просмотр корзины
 def get_cart_view(request):
@@ -403,65 +441,90 @@ def get_cart_view(request):
 
 def get_page_checkout(request):
     user = request.user
-    buyer = user.buyer_profile
-    order_class = CartAction(request)
-    data = order_class.cart_view()
-    cart = data['cart']
-    if request.method == 'POST':
-        data = order_class.checkout_view(request)
-        order = data['order']
-        ################## bot
-        text = f'''
-        Пользователь: {user.first_name}
-        
-        Номер телефона: {user.username}
-        
-        Номер заказа: #{order.id}
-        
-        Количесво товаров: {cart.total_quantity}
-        
-        Цена заказа: {intcomma(order.price)}
-        '''
+    if is_buyer(user):
+        data = CartAction(request).cart_view()
+        if data['products_cart'].exists() == False:
+            return redirect('home')
+        buyer = user.buyer_profile
+        cart = Cart.objects.get(buyer=buyer)
+        products_cart = ProductCart.objects.filter(cart=cart)
 
-        ################## bot
-        order_class.clear_all(request)
-        return redirect('success', order_id=order.id)
+        order_class = OrderAction(request)
+        if request.method == 'POST':
+
+            order = order_class.place_order(request)  
+            if order:  
+                products_cart.delete()
+                return redirect('success', order_id=order.id)
 
 
-    context = {
-        'buyer': buyer,
-        'cart': cart,
-    }
-    return render(request, 'digital_store/order.html', context)
+        context = {
+            'buyer': buyer,
+            'cart': cart,
+        }
 
+        return render(request, 'digital_store/order.html', context)
+
+    return redirect('home')
 
 def success(request, order_id):
-    order = get_object_or_404(Order, id=order_id, buyer=request.user.buyer_profile)
-    context = {
-        'order': order,
-    }
-    return render(request, 'digital_store/success.html', context)
+    if request.user.buyer_profile:
+        order = get_object_or_404(Order, id=order_id, buyer=request.user.buyer_profile)
+        return render(request, 'digital_store/success.html', {'order': order})
 
 
 
-# Telegram bot
-# def get_order(page):
-#     orders = Order.objects.all().order_by('-id')
-#     p = []
-#     total_order = []
-#     for order in orders:
-#         p.append(order)
-#         if len(p) == 3:
-#             total_order.append(p)
-#             p = []
-#     if p:
-#         total_order.append(p)
-#
-#     paginator = total_order
-#     page_obj = paginator[page]
-#
-#
-#     return order_page
+
+
+@login_required
+def orders_list(request):
+    if is_buyer(request.user):
+        orders = Order.objects.filter(buyer=request.user.buyer_profile).order_by('-created_at')
+        # products_order = ProductOrder.objects.filter(order)
+        context = {
+            'orders': orders,
+        }
+        return render(request, 'digital_store/orders_list.html', context)
+    
+    else:
+        return redirect('home')
+
+
+
+
+
+# def get_page_checkout(request):
+#     user = request.user
+#     buyer = user.buyer_profile
+#     order_class = CartAction(request)
+#     data = order_class.cart_view()
+#     cart = data['cart']
+#     if request.method == 'POST':
+#         data = OrderAction(request).checkout_view(request)
+#         order = data['order']
+#         ################## bot
+#         text = f'''
+#         Пользователь: {user.first_name}
+        
+#         Номер телефона: {user.username}
+        
+#         Номер заказа: #{order.id}
+        
+#         Количесво товаров: {cart.total_quantity}
+        
+#         Цена заказа: {intcomma(order.price)}
+#         '''
+
+#         ################## bot
+#         cart.productcart_set.all().delete()
+#         return redirect('success', order_id=order.id)
+
+
+#     context = {
+#         'buyer': buyer,
+#         'cart': cart,
+#     }
+#     return render(request, 'digital_store/order.html', context)
 
 
 ########################################################################################################################

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block main %}
+<div class="orders">
+
+    <div class="orders-header">
+        <h1>Мои заказы</h1>
+    </div>
+    {% for order in orders %}
+    <div class="order-card">
+
+        <div class="order-top">
+            <div>
+                <h3>Заказ #{{ order.id }}</h3>
+                <span>{{ order.created_at }}</span>
+            </div>
+        </div>
+
+        <div class="order-products">
+
+            {% for product_order in order.products_order.all %}
+            <div class="order-product">
+                <img src="{{ product_order.product.images.first.image.url }}">
+
+                <div>
+                    <h4>{{ product_order.product.title }}</h4>
+                    <p>Количество: {{ product_order.quantity }}</p>
+
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="order-bottom">
+            <strong>{{ order.price|intcomma }} sum</strong>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock main %}
