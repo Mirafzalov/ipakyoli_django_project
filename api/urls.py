@@ -19,9 +19,16 @@ urlpatterns = [
     path("brands/", BrandListView.as_view()),
     path("products/", ProductListView.as_view()),
     path("product/<int:id>/", ProductDetailView.as_view()),
-    path("orders/", OrderListView.as_view()),
     
-    path('seller/products/', SellerProductListCreateView.as_view())
+    
+    path('seller/products/', SellerProductListCreateView.as_view()),
+    path('seller/product/<int:id>/', SellerProductDetailView.as_view()),
+    
+    path('buyer/cart/', CartView.as_view()),
+    path('buyer/cart/products/', ProductCartupdateView.as_view()),
+    path('buyer/orders/', MyOrdersListView.as_view()),
+    path('buyer/place_order/', PlaceOrderView.as_view()),
+    
     
 
     
