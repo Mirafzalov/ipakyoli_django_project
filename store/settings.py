@@ -54,8 +54,9 @@ INSTALLED_APPS = [
     'telegram_bot',
     'django.contrib.humanize',
     'tinymce',
-
+    'drf_spectacular',
 ]
+
 
 
 
@@ -67,14 +68,28 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
+    
+    'DEFAULT_SCHEMA_CLASS':
+        'drf_spectacular.openapi.AutoSchema',
+
 }
 
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),   # or days=1
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),   # or days=1
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'My Marketplace API',
+    'DESCRIPTION': 'API for marketplace',
+    'VERSION': '1.0.0',
+}
+
+
+
 
 
 
