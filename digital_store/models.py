@@ -81,11 +81,13 @@ class SellerProfile(models.Model):
             return self.banner.url
         else:
             return '-'
+        
+    
 
 
 
     def __str__(self):
-        return f'Магазин: {self.store_name},  Продавец: {self.user.first_name}'
+        return f'id: {self.id},  Магазин: {self.store_name},  Продавец: {self.user.first_name}'
 
     class Meta:
         verbose_name = 'Профиль продавца'

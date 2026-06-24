@@ -7,7 +7,9 @@ Django==6.0.4
 django-jazzmin==3.0.4
 django-svg-image-form-field==1.0.1
 django-tinymce==5.0.0
-djangorestframework==3.17.1
+djangorestframework==3.14.0
+djangorestframework-simplejwt
+drf-spectacular==0.29.0
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
